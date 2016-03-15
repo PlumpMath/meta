@@ -1,0 +1,17 @@
+flowdas package
+===============
+
+Subpackages
+-----------
+
+.. toctree::
+
+    flowdas.meta
+
+Module contents
+---------------
+
+.. automodule:: flowdas
+    :members:
+    :undoc-members:
+    :show-inheritance:

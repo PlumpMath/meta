@@ -1,0 +1,207 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Meta: A platform-agnostic library for schema modeling &mdash; Meta 1.0.0a1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0.0a1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/translations.js"></script>
+    <link rel="top" title="Meta 1.0.0a1 documentation" href="#" />
+    <link rel="next" title="flowdas.meta package" href="api.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="meta-a-platform-agnostic-library-for-schema-modeling">
+<h1>Meta: A platform-agnostic library for schema modeling<a class="headerlink" href="#meta-a-platform-agnostic-library-for-schema-modeling" title="제목 주소">¶</a></h1>
+<p>Version 1.0.</p>
+<p>Meta 는 파이썬의 자료 구조를 정의하고, 직렬화하며, 검사하는데 사용할 수 있는 플랫폼 독립적인 라이브러리 입니다.</p>
+<blockquote>
+<div><div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">flowdas</span> <span class="kn">import</span> <span class="n">meta</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Author</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">Entity</span><span class="p">):</span>
+<span class="gp">... </span>   <span class="n">name</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">String</span><span class="p">()</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Book</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">Entity</span><span class="p">):</span>
+<span class="gp">... </span>   <span class="n">title</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">String</span><span class="p">()</span>
+<span class="gp">... </span>   <span class="n">published</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">Date</span><span class="p">()</span>
+<span class="gp">... </span>   <span class="n">authors</span> <span class="o">=</span> <span class="n">Author</span><span class="p">[</span><span class="mi">1</span><span class="p">:]()</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">author1</span> <span class="o">=</span> <span class="n">Author</span><span class="p">({</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;O&#39;</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">author2</span> <span class="o">=</span> <span class="n">Author</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">author2</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Flowdas&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">book</span> <span class="o">=</span> <span class="n">Book</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">book</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Meta&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">book</span><span class="o">.</span><span class="n">published</span> <span class="o">=</span> <span class="s1">&#39;2016-03-15&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">book</span><span class="o">.</span><span class="n">authors</span> <span class="o">=</span> <span class="p">[</span><span class="n">author1</span><span class="p">,</span> <span class="n">author2</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">book</span><span class="o">.</span><span class="n">published</span>
+<span class="go">datetime.date(2016, 3, 15)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">book</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pprint</span><span class="p">(</span><span class="n">book</span><span class="o">.</span><span class="n">dump</span><span class="p">())</span>
+<span class="go">{&#39;authors&#39;: [{&#39;name&#39;: &#39;O&#39;}, {&#39;name&#39;: &#39;Flowdas&#39;}],</span>
+<span class="go"> &#39;published&#39;: &#39;2016-03-15&#39;,</span>
+<span class="go"> &#39;title&#39;: &#39;Meta&#39;}</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>애초에 RESTful API 서버와 클라이언트를 지원하고, NoSQL ODM 에 기초를 제공하기 위해 설계되었으나, 두 응용에만 한정되지는 않습니다.</p>
+</div>
+<div class="section" id="install">
+<h1>Install<a class="headerlink" href="#install" title="제목 주소">¶</a></h1>
+<div class="highlight-python"><div class="highlight"><pre><span></span>pip install flowdas-meta==1.0.0a1
+</pre></div>
+</div>
+<p>파이썬 2.7 과 3.3+ 를 지원합니다. PyPy 역시 지원됩니다. 같이 설치되는 패키지는 없습니다.</p>
+</div>
+<div class="section" id="why">
+<h1>Why?<a class="headerlink" href="#why" title="제목 주소">¶</a></h1>
+<p>라이브러리의 목적과 거시적인 형태를 볼 때 유사한 라이브러리들은 많습니다. 하지만 자세히 들여다보면 설계상의 의사결정들에 미묘한 차이들이 발견됩니다.
+라이브러리를 새로 만든 이유는 적절한 수준에서 수용할 수 있는 조합을 발견하지 못했기 때문입니다. 여러분들도 같은 시각으로 Meta 를 바라보게될줄로 압니다.
+Meta 가 갖고 있는 특징이자 한계입니다.</p>
+<dl class="docutils">
+<dt>플랫폼 독립적</dt>
+<dd>데이터베이스나 기타 어떤 플랫폼에도 종속적이지 않습니다.</dd>
+<dt>정의와 구현의 일체화</dt>
+<dd>자료 구조의 정의와 자료 구조의 구현을 일체화합니다.
+상기한 예에서 <code class="docutils literal"><span class="pre">Author</span></code> 는 <code class="docutils literal"><span class="pre">Book</span></code> 을 정의하는데 사용되지만, 예에서 확인할 수 있듯이 스스로 값 자체이기도 합니다.
+이 때문에 객체들간의 관계를 정의하기 위해 별도의 클래스를 사용하지 않고 직접 기술됩니다. 순환 구조를 정의하기 위한 방법도 제공합니다.</dd>
+<dt>다형성(Polymorphism)</dt>
+<dd><p class="first">두가지 종류의 다형성을 지원합니다.</p>
+<dl class="last docutils">
+<dt>클래스 다형성</dt>
+<dd>클래스 계층 구조를 만들고, 계층 구조를 고려한 검사를 수행하며, 역시 계층 구조가 반영된 가역적인 직렬화를 제공합니다.</dd>
+<dt>Union</dt>
+<dd>여러 종류의 형을 조합하여 그 중의 하나를 표시할 수 있는 방법을 제공합니다.</dd>
+</dl>
+</dd>
+<dt>일반화된 배열</dt>
+<dd>배열 지원을 강화합니다. 위의 예에서 나오는 <code class="docutils literal"><span class="pre">Author[1:]()</span></code> 표현은 길이 1 이상인 <code class="docutils literal"><span class="pre">Author</span></code> 의 배열을 뜻합니다.
+균일(homogeneous)/비균일(heterogeneous), 고정/가변 길이 배열이 무한 중첩될 수 있습니다.</dd>
+<dt>암묵적인 검사</dt>
+<dd>검사를 암묵적인 검사(Implicit Validation)와 명시적인 검사(Explicit Validation)로 구분합니다.
+위의 예에서 나오는 <code class="docutils literal"><span class="pre">book.published</span> <span class="pre">=</span> <span class="pre">'2016-03-15'</span></code> 라는 문장은 암묵적인 검사를 수행하고,
+<code class="docutils literal"><span class="pre">book.validate()</span></code> 라는 문장은 명시적인 검사를 수행합니다.
+암묵적인 검사는 값들이 올바른 형태를 갖고 있는지를 검사하고, 명시적인 검사는 필요한 값들의 존재 여부와 값들간의 관계를 검사합니다.</dd>
+</dl>
+</div>
+<div class="section" id="guide">
+<h1>Guide<a class="headerlink" href="#guide" title="제목 주소">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul class="simple">
+</ul>
+</div>
+<p>TODO</p>
+</div>
+<div class="section" id="api-reference">
+<h1>API Reference<a class="headerlink" href="#api-reference" title="제목 주소">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">flowdas.meta package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api.html#constants">Constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#functions">Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#classes">Classes</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="제목 주소">¶</a></h1>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><span>색인</span></a></li>
+<li><a class="reference internal" href="py-modindex.html"><span>모듈 목록</span></a></li>
+<li><a class="reference internal" href="search.html"><span>검색 페이지</span></a></li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">목차</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Meta: A platform-agnostic library for schema modeling</a></li>
+<li><a class="reference internal" href="#install">Install</a></li>
+<li><a class="reference internal" href="#why">Why?</a></li>
+<li><a class="reference internal" href="#guide">Guide</a></li>
+<li><a class="reference internal" href="#api-reference">API Reference</a></li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+      <li>Next: <a href="api.html" title="다음 장">flowdas.meta package</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>현재 문서</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/index.txt"
+            rel="nofollow">소스 코드를 보려면</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>빠른 검색</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="바로 가기" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    모듈, 클래스 또는 함수 이름을 입력하십시오.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;Flowdas Inc.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+      |
+      <a href="_sources/index.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
