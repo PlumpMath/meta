@@ -1,0 +1,2 @@
+include setup.cfg VERSION LICENSE
+exclude boot.py
