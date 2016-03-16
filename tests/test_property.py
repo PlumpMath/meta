@@ -317,6 +317,30 @@ def test_json_codec():
     assert x.dump(meta.Context()) == json.dumps({'a': data}, ensure_ascii=False, separators=(',', ':'))
 
 
+def test_context_local_codec():
+    class X(meta.Entity):
+        a = meta.Integer(codec='test')
+
+    class TestCodec(meta.Codec):
+        def encode(self, value, property, context):
+            return -value
+
+        def decode(self, value, property, context):
+            return -value
+
+    ctx = meta.Context()
+    ctx.set_codec('test', TestCodec())
+
+    x = X()
+    x.a = 123
+    assert x.dump(ctx) == {'a': -123}
+    x = X().load({'a': 789}, ctx)
+    assert x.a == -789
+
+    with pytest.raises(LookupError):
+        x.dump(meta.Context())
+
+
 def test_overide_options():
     class PositiveInteger(meta.Integer):
         class Options(meta.Integer.Options):

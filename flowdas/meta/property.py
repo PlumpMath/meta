@@ -72,6 +72,7 @@ class Context(Type.Options):
     Since version 1.0.
     """
     _cs_codecs_ = {}
+    _cm_codecs_ = None
     _explicit_ = True
     view = None
     strict = False
@@ -90,14 +91,31 @@ class Context(Type.Options):
         return super(Context, self).__repr__(args=args)
 
     @classmethod
-    def set_codec(cls, name, codec):
+    def set_global_codec(cls, name, codec):
         cls._cs_codecs_[name] = codec
 
     @classmethod
-    def get_codec(cls, name):
+    def get_global_codec(cls, name):
         if name not in cls._cs_codecs_:
             raise LookupError('unknown codec: %s' % name)
         return cls._cs_codecs_[name]
+
+    def set_codec(self, name, codec):
+        """
+        Context-local :py:class:`Codec` 을 등록한다.
+
+        ``codec`` 으로 :py:class:`Codec` 의 인스턴스를 제공하면,
+        :py:class:`Context` 별로 다른 :py:class:`Codec` 이 사용되도록 할 수 있다.
+        """
+        if self._cm_codecs_ is None:
+            self._cm_codecs_ = {name: codec}
+        else:
+            self._cm_codecs_[name] = codec
+
+    def get_codec(self, name):
+        if self._cm_codecs_ is not None and name in self._cm_codecs_:
+            return self._cm_codecs_[name]
+        return self.get_global_codec(name)
 
     def reset(self):
         """
@@ -201,7 +219,7 @@ class Codec(object):
     @staticmethod
     def register(name):
         def deco(cls):
-            Context.set_codec(name, cls())
+            Context.set_global_codec(name, cls())
 
         return deco
 
@@ -254,7 +272,7 @@ def codec(name, *args, **kwargs):
 
     Since version 1.0.
     """
-    return Context.get_codec(name).__class__(*args, **kwargs)
+    return Context.get_global_codec(name).__class__(*args, **kwargs)
 
 
 @Codec.register('json')

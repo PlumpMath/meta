@@ -70,7 +70,7 @@ Classes
 .. autoclass:: Complex(**kwargs)
 
 .. autoclass:: Context(strict=False, view=None)
-    :members: errors, reset
+    :members: errors, reset, set_codec
 
 .. autoclass:: Date(**kwargs)
 
