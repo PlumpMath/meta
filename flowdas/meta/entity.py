@@ -541,11 +541,9 @@ class Entity(Composite):
     # serialization
     #
 
-    def _dump_(self, value, context):
+    def _prepare_dump_(self, value, context):
         with Marker(context, value) as marker:
-            # preserve orderedness
-            encoded = type(value._cs_fields_)()
-
+            dumps = []
             for key in value._cs_fields_:
                 if self.is_visible(key, marker.context, value):
                     val = value._get_(key)
@@ -554,12 +552,34 @@ class Entity(Composite):
                             property = value._cs_fields_[key]
                             name = property._pm_opts_.get('name', key)
                             if val is Null:
-                                encoded[name] = None
-                            elif key == value._cs_kind_key_:
-                                encoded[name] = val
-                            else:
-                                encoded[name] = property.dump(val, marker.context)
-            return encoded
+                                val = None
+                            elif key != value._cs_kind_key_:
+                                val = property.dump(val, marker.context)
+                            dumps.append((key, property, name, val))
+            return dumps
+
+    def _dump_(self, value, context):
+        encoded = type(value._cs_fields_)()
+        for key, property, name, val in self._prepare_dump_(value, context):
+            encoded[name] = val
+        return encoded
+
+    def _prepare_load(self, value, context):
+        if self._cs_kind_key_ is None:
+            klass = self.__class__
+        else:
+            kind_name = self._cs_fields_[self._cs_kind_key_]._pm_opts_.get('name', self._cs_kind_key_)
+            klass = self._cs_kind_ns_.get(value.get(kind_name))
+            if klass is None or not issubclass(klass, self.__class__):
+                raise ValueError()
+        instance = klass(**self._pm_opts_.__dict__)
+        fields = {}
+        for key in instance._cs_fields_:
+            if self.is_visible(key, context, instance):
+                property = instance._cs_fields_[key]
+                name = property._pm_opts_.get('name', key)
+                fields[name] = (key, property)
+        return instance, fields
 
     def _load_(self, value, context):
         if self._cs_kind_key_ is None:
@@ -570,27 +590,20 @@ class Entity(Composite):
                 return value
         if not isinstance(value, dict):
             raise ValueError()
-        if self._cs_kind_key_ is None:
-            klass = self.__class__
-        else:
-            kind_name = self._cs_fields_[self._cs_kind_key_]._pm_opts_.get('name', self._cs_kind_key_)
-            klass = self._cs_kind_ns_.get(value.get(kind_name))
-            if klass is None or not issubclass(klass, self.__class__):
-                raise ValueError()
-        instance = klass(**self._pm_opts_.__dict__)
+
+        instance, fields = self._prepare_load(value, context)
 
         with Marker(context, value) as marker:
             for name, val in value.items():
                 with marker.cursor(name, Null):
-                    key = instance._es_names_.get(name)
-                    if key is not None and key == instance._cs_kind_key_:
-                        continue
-                    if not self.is_visible(key, marker.context, instance):
+                    if name not in fields:
                         if marker.context.strict:
                             raise ValueError()
                         continue
+                    key, property = fields[name]
+                    if key == instance._cs_kind_key_:
+                        continue
                 with marker.cursor(name, val):
-                    property = instance._cs_fields_[key]
                     val = property.load(val, marker.context)
                     if val is None:
                         val = Null

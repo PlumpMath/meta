@@ -971,6 +971,7 @@ __all__ = [
     'Null',
     'Context',
     'Codec',
+    'Marker',
     'Property',
     'Tuple',
     'codec',
