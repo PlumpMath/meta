@@ -356,3 +356,31 @@ def test_overide_options():
     with pytest.raises(ValueError):
         x.positive = -1
     assert X.positive.get_options().newoption is True
+
+def test_selector():
+
+    class A(meta.Entity):
+        pass
+
+    class X(meta.Entity):
+        class Options(meta.Entity.Options):
+            many = False
+
+        @meta.Selector(A(), A[:]())
+        def data(self):
+            return self.get_options().many
+
+    x = X()
+    a = A()
+    x.data = a
+    with pytest.raises(ValueError):
+        x.data = [a]
+    assert x.dump() == {'data': {}}
+
+    x = X(many=True)
+    x.data = [a]
+    with pytest.raises(ValueError):
+        x.data = a
+    assert x.dump() == {'data': [{}]}
+
+

@@ -736,13 +736,13 @@ class Property(Type):
 class Container(Property):
     _cm_args_ = []
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *properties, **kwargs):
         super(Container, self).__init__(**kwargs)
-        for i, arg in enumerate(args):
+        for i, arg in enumerate(properties):
             if not isinstance(arg, Property):
                 raise TypeError('%s expects properties, but given %s' % (self.__class__.__name__, repr(arg)))
             arg._bind_(i, self)
-        self._cm_args_ = list(args)
+        self._cm_args_ = list(properties)
 
     def __repr__(self, args=None, opts=None):
         if args is None:
@@ -828,12 +828,12 @@ class Tuple(Container):
     """
     정해진 형태를 갖는 :py:class:`tuple` 을 표현하는 :py:class:`Property`.
 
-    ``args`` 로 제공한 :py:class:`Property` 의 목록과 일치하는 형태의 :py:class:`tuple` 이나 :py:class:`list` 를 받아들이고,
+    ``properties`` 로 제공한 :py:class:`Property` 의 목록과 일치하는 형태의 :py:class:`tuple` 이나 :py:class:`list` 를 받아들이고,
     :py:class:`tuple` 로 변환한다.
 
-    ``args`` 올 수 있는 :py:class:`Property` 에 제약은 없다. 때문에 임의의 깊이로 중첩할 수 있다.
+    ``properties`` 올 수 있는 :py:class:`Property` 에 제약은 없다. 때문에 임의의 깊이로 중첩할 수 있다.
 
-    :py:class:`tuple` 이 None 을 포함할 수 있느냐는 ``args`` 로 제공된 :py:class:`Property` 들의 ``required`` 옵션이 결정한다.
+    :py:class:`tuple` 이 None 을 포함할 수 있느냐는 ``properties`` 로 제공된 :py:class:`Property` 들의 ``required`` 옵션이 결정한다.
 
     :py:meth:`Entity.dump` 할 때 :py:class:`list` 를 출력한다.
 
@@ -846,7 +846,7 @@ class Tuple(Container):
         - :py:class:`slice`
         - :py:data:`Ellipsis`
 
-        모두 ``args`` 로 지정된 단위가 몇번 등장할 수 있는지를 지정한다. :py:data:`Ellipsis` 는 길이 제약이 없다는 뜻이고, 정수나 그 목록은
+        모두 ``properties`` 로 지정된 단위가 몇번 등장할 수 있는지를 지정한다. :py:data:`Ellipsis` 는 길이 제약이 없다는 뜻이고, 정수나 그 목록은
         지정한 횟수로 제한한다는 뜻이고, :py:class:`slice` 는 범위를 표현한다.
 
         기본 값은 1.
@@ -965,6 +965,7 @@ class Tuple(Container):
                             raise ValueError()
                         decoded.append(None)
             return tuple(decoded)
+
 
 
 __all__ = [

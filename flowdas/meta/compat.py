@@ -31,8 +31,9 @@ MAX_SAFE_INTEGER = 9007199254740991
 safeint_type = type(MAX_SAFE_INTEGER)
 
 if PY2:
-    def throw_exc_info(exc_info):
-        raise exc_info
+    from compat2 import throw_exc_info
+
+    throw_exc_info = throw_exc_info
 else:
     def throw_exc_info(exc_info):
         e = exc_info[0](exc_info[1])

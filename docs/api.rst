@@ -211,6 +211,8 @@ Classes
 
     Since version 1.0.
 
+.. autoclass:: Selector
+
 .. autoclass:: String(**kwargs)
 
 .. autoclass:: Time(**kwargs)

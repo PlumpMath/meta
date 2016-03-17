@@ -82,6 +82,57 @@ class Kind(Property):
         return instance
 
 
+class Selector(Property):
+    """
+    :py:class:`Entity` 의 옵션에 따라 형이 결정되는 :py:class:`Property`.
+
+    데코레이터 문법을 사용해서 ``properties`` 로 제공한 :py:class:`Property` 들 중 하나를 선택하는 메쏘드를 제공한다.
+
+    메쏘드는 ``[0, len(properties))`` 범위의 정수를 돌려주어야 한다.
+
+    이 메쏘드는 다른 :py:class:`Property` 들을 참조할 수는 없으나 :py:class:`Entity` 의 옵션을 참조할 수는 있다.
+
+    :py:class:`Property` 의 모든 옵션을 지원한다.
+
+    Example
+
+        .. literalinclude:: /../tests/ex/selector.rst
+
+    Since version 1.0.
+    """
+    _sm_args_ = []
+    _select = None
+
+    def __init__(self, *properties, **kwargs):
+        super(Selector, self).__init__(**kwargs)
+        for arg in properties:
+            if not isinstance(arg, Property):
+                raise TypeError('%s expects properties, but given %s' % (self.__class__.__name__, repr(arg)))
+        self._sm_args_ = list(properties)
+
+    def __call__(self, func):
+        self._select = func
+        return self
+
+    def _bind_(self, key, owner):
+        super(Selector, self)._bind_(key, owner)
+        for arg in self._sm_args_:
+            arg._bind_(key, owner)
+
+    def __set__(self, instance, value):
+        self.select(instance).__set__(instance, value)
+
+    def select(self, instance):
+        if self._select is None:
+            raise NotImplementedError()
+        index = self._select(instance)
+        if index is None:
+            raise TypeError()
+        if index < 0 or index >= len(self._sm_args_):
+            raise ValueError()
+        return self._sm_args_[index]
+
+
 class Composite(Property):
     _cs_fields_ = {}  # {key: property}
     _cs_kind_key_ = None
@@ -554,7 +605,10 @@ class Entity(Composite):
                             if val is Null:
                                 val = None
                             elif key != value._cs_kind_key_:
-                                val = property.dump(val, marker.context)
+                                if isinstance(property, Selector):
+                                    val = property.select(self).dump(val, marker.context)
+                                else:
+                                    val = property.dump(val, marker.context)
                             dumps.append((key, property, name, val))
             return dumps
 
@@ -604,7 +658,10 @@ class Entity(Composite):
                     if key == instance._cs_kind_key_:
                         continue
                 with marker.cursor(name, val):
-                    val = property.load(val, marker.context)
+                    if isinstance(property, Selector):
+                        val = property.select(self).load(val, marker.context)
+                    else:
+                        val = property.load(val, marker.context)
                     if val is None:
                         val = Null
                     instance[key] = val
@@ -1035,5 +1092,6 @@ class Union(Composite):
 __all__ = [
     'Kind',
     'Entity',
+    'Selector',
     'Union',
 ]
