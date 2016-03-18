@@ -31,9 +31,8 @@ MAX_SAFE_INTEGER = 9007199254740991
 safeint_type = type(MAX_SAFE_INTEGER)
 
 if PY2:
+    # noinspection PyUnresolvedReferences
     from compat2 import throw_exc_info
-
-    throw_exc_info = throw_exc_info
 else:
     def throw_exc_info(exc_info):
         e = exc_info[0](exc_info[1])
@@ -54,6 +53,7 @@ def make_key(key):
 
 
 try:
+    # noinspection PyUnresolvedReferences
     from email.utils import parsedate_to_datetime
 except ImportError:
     import email.utils
@@ -69,6 +69,7 @@ except ImportError:
         return dt
 
 try:
+    # noinspection PyUnresolvedReferences
     from datetime import timezone
 except ImportError:
 
@@ -99,6 +100,7 @@ except ImportError:
     timezone.utc = timezone(datetime.timedelta(0))
 
 try:
+    # noinspection PyUnresolvedReferences
     import ipaddress
 except ImportError:
 
@@ -108,3 +110,21 @@ except ImportError:
 
 
     ipaddress = _ipaddress()
+
+__all__ = [
+    'MAX_SAFE_INTEGER',
+    'PY2',
+    'PY3',
+    'integer_types',
+    'long_type',
+    'basestring_types',
+    'text_types',
+    'unicode_type',
+    'bytes_type',
+    'safeint_type',
+    'throw_exc_info',
+    'make_key',
+    'parsedate_to_datetime',
+    'timezone',
+    'ipaddress',
+]
