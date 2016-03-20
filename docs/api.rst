@@ -16,11 +16,11 @@ Null
 ^^^^
 
 .. py:data:: Null
-:annotation:
+    :annotation:
 
-        두 가지 특별한 목적을 위해 사용되는 상수.
+    두 가지 특별한 목적을 위해 사용되는 상수.
 
-        - :py:class:`Entity` 에서 property 의 값이 null 임을 표현한다. 값이 없음을 표현하는 None 과 구분된다.
+    - :py:class:`Entity` 에서 property 의 값이 null 임을 표현한다. 값이 없음을 표현하는 None 과 구분된다.
     - :py:class:`Context` 가 제공하는 에러 정보의 ``value`` 값에 사용되어, 값이 없음을 표현한다.
 
     Example
@@ -95,7 +95,7 @@ Context
 ^^^^^^^
 
 .. autoclass:: Context(strict=False, view=None)
-:members: errors, reset, set_codec
+    :members: errors, reset, set_codec
 
 Date
 ^^^^
@@ -106,15 +106,15 @@ DateTime
 ^^^^^^^^
 
 .. autoclass:: DateTime(**kwargs)
-:members:
+    :members:
 
 DateTimeFormat
 ^^^^^^^^^^^^^^
 
 .. autoclass:: DateTimeFormat
-:members: name
+    :members: name
 
-        .. automethod:: format
+    .. automethod:: format
 
     .. automethod:: parse
 
@@ -261,8 +261,8 @@ Primitive
 ^^^^^^^^^
 
 .. autoclass:: Primitive(**kwargs)
-:members:
-        :undoc-members:
+    :members:
+    :undoc-members:
 
 Property
 ^^^^^^^^

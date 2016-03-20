@@ -6,8 +6,8 @@ True
 >>> x.dump()
 {}
 >>> x.a = meta.Null
->>> x.a is meta.Null
-True
+>>> x.a
+Null
 >>> x.a is None
 False
 >>> x.dump()

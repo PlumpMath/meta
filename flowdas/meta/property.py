@@ -14,7 +14,20 @@ from contextlib import contextmanager
 from .compat import *
 from .type import Type
 
-Null = NotImplemented
+
+class _Null(object):
+    _instance = None
+
+    def __repr__(self):
+        return 'Null'
+
+    def __bool__(self):
+        return False
+
+    __nonzero__ = __bool__
+
+
+Null = _Null()
 
 
 class Error(object):
@@ -825,6 +838,7 @@ def declare(property):
 
         def __getitem__(self, item):
             return Tuplizer(self, item)
+
     try:
         frame = sys._getframe(1)
     except:

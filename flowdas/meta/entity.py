@@ -901,12 +901,10 @@ class Entity(Composite):
     def __len__(self):
         return len(self._em_data_)
 
-    if PY2:
-        def __nonzero__(self):
-            return bool(self._em_data_)
-    else:
-        def __bool__(self):
-            return bool(self._em_data_)
+    def __bool__(self):
+        return bool(self._em_data_)
+
+    __nonzero__ = __bool__
 
     def copy(self):
         """

@@ -141,8 +141,8 @@ Loading
 :py:meth:`Entity.dump` 와는 반대로, 데이터에 None 이 포함되어 있는 경우 :py:data:`Null` 로 변환된다.
 
     >>> book = Book().load({'title': 'Meta', 'published': None})
-    >>> book.published is meta.Null
-    True
+    >>> book.published
+    Null
 
 속성에 값을 직접 대입할 때와 마찬가지로, 값에 문제가 있으면 :py:meth:`Entity.load` 도 예외를 일으킨다.
 
