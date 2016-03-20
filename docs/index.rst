@@ -20,7 +20,7 @@ Install
 
 파이썬 2.7 과 3.3+ 를 지원합니다. PyPy 역시 지원됩니다. 같이 설치되는 패키지는 없습니다.
 
-아직 배포되지 않은 개발 중인 버전을 설치하는 방법은 이렇습니다.::
+아직 PyPI 에 배포되지 않은 개발 버전을 설치하는 방법은 이렇습니다.::
 
     pip install git+https://github.com/flowdas/meta.git@develop#egg=flowdas-meta
 
@@ -59,13 +59,20 @@ Guide
 .. toctree::
    :maxdepth: 2
 
-TODO
+   quickstart
+   properties
+   serialization
+   nesting
+   tuple
+   union
+   inheritance
+   extending
 
 API Reference
 =============
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
    api
 

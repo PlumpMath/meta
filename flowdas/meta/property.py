@@ -780,8 +780,11 @@ class Proxy(Property):
         self.owner = None
 
     def _resolve(self):
-        module = sys.modules.get(self.factory.klass.__module__)
-        return getattr(module, self.factory.klass.__name__, None)
+        if self.factory.frame is None:
+            module = sys.modules.get(self.factory.klass.__module__)
+            return getattr(module, self.factory.klass.__name__, None)
+        else:
+            return self.factory.frame.f_locals.get(self.factory.klass.__name__)
 
     def resolve(self):
         klass = self._resolve()
@@ -813,16 +816,20 @@ class Proxy(Property):
 
 def declare(property):
     class Factory(object):
-        def __init__(self, klass):
+        def __init__(self, klass, frame=None):
             self.klass = klass
+            self.frame = frame
 
         def __call__(self, *args, **kwargs):
             return Proxy(self, args, kwargs)
 
         def __getitem__(self, item):
             return Tuplizer(self, item)
-
-    return Factory(property)
+    try:
+        frame = sys._getframe(1)
+    except:
+        frame = None
+    return Factory(property, frame)
 
 
 class Tuple(Container):

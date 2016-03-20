@@ -122,7 +122,27 @@ def test_isolation():
 
 
 def test_declare():
-    from .circular import X, Parent, Child, Y, Z
+    @meta.declare
+    class X: pass
+
+    class X(meta.Entity):
+        x = X(required=True)
+
+    @meta.declare
+    class Child: pass
+
+    class Parent(meta.Entity):
+        children = Child[:](required=True)
+
+    class Child(meta.Entity):
+        parent = Parent(required=True)
+
+    @meta.declare
+    class Y: pass
+
+    class Z(meta.Entity):
+        y = Y(required=True)
+
     x1 = X()
     x2 = X()
     x1.x = x2
@@ -379,7 +399,11 @@ def test_default():
 
 
 def test_error():
-    from .circular import X, Parent
+    @meta.declare
+    class X: pass
+
+    class X(meta.Entity):
+        x = X(required=True)
 
     d = dict(x=dict(x=1))
     context = meta.Context()
@@ -390,6 +414,15 @@ def test_error():
     assert context.errors[0].value == 1
     assert context.errors[0].location == '/x/x'
     assert context.errors[0].exc_info[0] == ValueError
+
+    @meta.declare
+    class Child: pass
+
+    class Parent(meta.Entity):
+        children = Child[:](required=True)
+
+    class Child(meta.Entity):
+        parent = Parent(required=True)
 
     d = dict(
         children=[
@@ -429,7 +462,14 @@ def test_error():
 
 
 def test_multi_errors():
-    from .circular import Parent
+    @meta.declare
+    class Child: pass
+
+    class Parent(meta.Entity):
+        children = Child[:](required=True)
+
+    class Child(meta.Entity):
+        parent = Parent(required=True)
 
     d = dict(
         children=[
@@ -541,6 +581,7 @@ def test_union():
     x.p = (123,)
     assert x.p.s == (123,)
     assert x.dump() == {'p': (123,)}
+
 
 def test_union_with_error():
     class U(meta.Union):
@@ -996,8 +1037,8 @@ def test_validate():
     assert 'c' in x
     assert 'd' in x
 
-def test_is_visible():
 
+def test_is_visible():
     class X(meta.Entity):
         a = meta.Integer(required=True)
         b = meta.Integer()
