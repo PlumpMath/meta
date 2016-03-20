@@ -17,11 +17,15 @@ Meta 가 제공하는 가장 기본적인 도구는 Entity 인데, 자료 구조
     >>> class Book(meta.Entity):
     ...    title = meta.String()
     ...    published = meta.Date()
+    >>> Book
+    class Book(published=Date(), title=String())
 
 이제 모든 ``Book`` 의 인스턴스는 ``title`` 과 ``published`` 를 속성으로 갖게 된다.
 인스턴스를 처음 만들면 모든 속성은 None 값을 갖는다.
 
     >>> book = Book()
+    >>> book
+    Book()
     >>> book.title is None
     True
     >>> book.published is None
@@ -35,6 +39,8 @@ Meta 가 제공하는 가장 기본적인 도구는 Entity 인데, 자료 구조
     >>> book.published = '2016-03-15'
     >>> book.published
     datetime.date(2016, 3, 15)
+    >>> book
+    Book(dict(published=datetime.date(2016, 3, 15), title='Meta'))
 
 속성에 형을 부여하는 것을 Property 라고 한다.
 가령 ``title`` 은 문자열(:py:class:`String`), ``published`` 는 날짜(:py:class:`Date`)로 제한된다.
@@ -75,6 +81,12 @@ Meta 가 제공하는 가장 기본적인 도구는 Entity 인데, 자료 구조
     >>> book.update(title='Meta', published='2016-03-15')
     >>> sorted(book.items())
     [('published', datetime.date(2016, 3, 15)), ('title', 'Meta')]
+    >>> book == {'title': 'Meta', 'published': datetime.date(2016, 3, 15)}
+    True
+    >>> bool(book)
+    True
+    >>> bool(Book())
+    False
 
 속성을 지울수도 있다. 일 단 지워지면 다시 None 값이 제공된다.
 
@@ -85,12 +97,16 @@ Meta 가 제공하는 가장 기본적인 도구는 Entity 인데, 자료 구조
 
 None 값이 읽힌다 하더라도, 값이 None 인 속성은 없는 것처럼 취급된다.
 
+    >>> book
+    Book(dict(title='Meta'))
     >>> list(book.items())
     [('title', 'Meta')]
 
 때문에 None 을 대입하는 것 역시 지우는 것과 같다.
 
     >>> book.title = None
+    >>> book
+    Book()
     >>> list(book.items())
     []
 
@@ -122,6 +138,8 @@ Dumping
 None 값을 출력하고 싶다면 :py:data:`Null` 을 사용하면 된다.
 
     >>> book.published = meta.Null
+    >>> book
+    Book(dict(published=Null, title='Meta'))
     >>> pprint(book.dump())
     {'published': None, 'title': 'Meta'}
 
@@ -160,6 +178,8 @@ Validation
     >>> class Book(meta.Entity):
     ...    title = meta.String(required=True)
     ...    published = meta.Date()
+    >>> Book
+    class Book(published=Date(), title=String(required=True))
 
 ``required`` 옵션을 사용해서 ``title`` 속성이 반드시 필요하다고 선언했다. 하지만 이 값을 제공하지 않고도 인스턴스를 만들 수 있다.
 

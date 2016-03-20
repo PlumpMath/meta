@@ -41,7 +41,7 @@ class TypeBase(object):
             args.extend('%s=%s' % (k, repr(v)) for k, v in self.__dict__.items() if not k.startswith('_'))
             if opts is not None:
                 args.extend(opts)
-            return '%s(%s)' % (self.__class__.__name__, ', '.join(args))
+            return '%s(%s)' % (self.__class__.__name__, ', '.join(sorted(args)))
 
         def get(self, key, default=None):
             value = getattr(self, key, default)
@@ -83,12 +83,12 @@ class TypeBase(object):
     def _repr_(cls, args=None):
         metas = ['%s=%s' % (k, repr(v)) for k, v in cls._ts_opts_.__dict__.items()]
         if metas:
-            meta = '.Meta(%s)' % ', '.join(metas)
+            meta = '.Meta(%s)' % ', '.join(sorted(metas))
         else:
             meta = ''
         if args is None:
             args = []
-        return 'class %s.%s(%s)%s at 0x%x' % (cls.__module__, cls.__name__, ', '.join(args), meta, id(cls))
+        return 'class %s(%s)%s' % (cls.__name__, ', '.join(args), meta)
 
     @classmethod
     def _getitem_(cls, item):

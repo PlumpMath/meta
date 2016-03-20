@@ -548,13 +548,13 @@ class Property(Type):
     def __repr__(self, args=None, opts=None):
         if args is None:
             args = []
-        args.append('id=0x%x' % id(self))
+        xargs = []
         if self._pm_order_ is not None:
-            args.append('ordered=True')
-        args.extend('%s=%s' % (k, repr(v)) for k, v in self._pm_opts_.__dict__.items())
+            xargs.append('ordered=True')
+        xargs.extend('%s=%s' % (k, repr(v)) for k, v in self._pm_opts_.__dict__.items())
         if opts is not None:
-            args.extend(opts)
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(args))
+            xargs.extend(opts)
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(args+sorted(xargs)))
 
     #
     # ordered property

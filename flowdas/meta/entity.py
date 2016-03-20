@@ -143,7 +143,11 @@ class Composite(Property):
 
     @classmethod
     def _repr_(cls):
-        return super(Composite, cls)._repr_(args=['%s=%s' % (k, repr(v)) for k, v in cls._cs_fields_.items()])
+        if isinstance(cls._cs_fields_, OrderedDict):
+            items = cls._cs_fields_.items()
+        else:
+            items = sorted(cls._cs_fields_.items())
+        return super(Composite, cls)._repr_(args=['%s=%s' % (k, repr(v)) for k, v in items])
 
     @staticmethod
     def _init_(cls, attrs, options):
@@ -464,7 +468,7 @@ class Entity(Composite):
         data = ['%s=%s' % (k, 'Null' if v is Null else repr(v)) for k, v in self.items()]
         if data:
             if args is None:
-                args = ['dict(%s)' % ', '.join(data)]
+                args = ['dict(%s)' % ', '.join(sorted(data))]
         return super(Entity, self).__repr__(args=args, opts=opts)
 
     def _copy_(self, *args, **kwargs):
