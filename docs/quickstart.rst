@@ -269,3 +269,65 @@ Error
     >>> sorted(map(lambda e: (e.location, e.value), ctx.errors))
     [('/published', 'abc'), ('/title', None)]
 
+Builtin Properties
+------------------
+
+파이썬의 내장형들과 표준 라이브러리에 포함된 형들을 표현하기 위한 기본 Property 들을 제공한다.
+
+- :py:class:`Primitive`
+    - :py:class:`String` - 문자열
+        - :py:class:`Unicode` - 텍스트 문자열
+        - :py:class:`Bytes` - 바이너리 문자열
+    - :py:class:`Boolean` - :py:class:`bool`
+    - :py:class:`Number` - 숫자
+        - :py:class:`Integer` - 정수
+        - :py:class:`Float` - :py:class:`float`
+    - :py:class:`JsonObject` - JSON object
+    - :py:class:`JsonArray` - JSON array
+- :py:class:`Decimal` - :py:class:`decimal.Decimal`
+- :py:class:`Complex` - :py:class:`complex`
+- :py:class:`DateTime` - :py:class:`datetime.datetime`
+- :py:class:`Date` - :py:class:`datetime.date`
+- :py:class:`Time` - :py:class:`datetime.time`
+- :py:class:`Duration` - :py:class:`datetime.timedelta`
+- :py:class:`IpAddress` - IP 주소
+    - :py:class:`Ipv4Address` - :py:class:`ipaddress.IPv4Address`
+    - :py:class:`Ipv6Address` - :py:class:`ipaddress.IPv6Address`
+- :py:class:`Uuid` - :py:class:`uuid.UUID`
+
+표시한 계층 구조는 의미가 있다.
+가령 :py:class:`String` 은 :py:class:`Unicode` 나 :py:class:`Bytes` 중 어떤 값이건 표현할 수 있다는 뜻이고,
+:py:class:`Primitive` 는 그 아래에 위치한 어떤 종류의 값이건 받아들인다는 의미다.
+
+Property 의 계층 구조는 대응하는 파이썬 형의 계층 구조를 반영하지만 정확히 따르지는 않는다.
+가령 파이썬에서 :py:class:`bool` 은 :py:class:`int` 로 취급되지만 Property 는 다른 종류의 형으로 취급한다.
+이는 직렬화가 전제되고 있고, 파이썬의 관례가 그 외부에서도 늘 받아들여지는 것은 아니기 때문이다.
+
+각 Property 들의 동작에 대한 상세한 설명는 클래스별 문서에서 제공된다.
+
+Options
+-------
+
+Property 의 생성자는 키워드 옵션을 받아들인다. 앞서 예로 든 ``required`` 와 같이 모든 Property 에 적용되는 기본 옵션들이 있고,
+각 Property 들이 따로 지원하는 확장 옵션들이 있다. 기본 옵션들에 대한 설명은 :py:class:`Property` 문서에서 제공된다.
+
+여기에서는 간단히 예시한다.
+
+    >>> class Book(meta.Entity):
+    ...     title = meta.String(required=True, allow_empty=False)
+    ...     published = meta.Date(format='iso')
+    ...     created = meta.DateTime(format='unix', default=meta.DateTime.now)
+    ...     isbn13 = meta.String(validate=lambda s: len(s)==13 and s.isdigit())
+    >>> book = Book()
+    >>> book.title = ''
+    Traceback (most recent call last):
+        ...
+    ValueError
+    >>> book.created # doctest: +ELLIPSIS
+    datetime.datetime(...)
+    >>> book.isbn13 = '123456789012X'
+    Traceback (most recent call last):
+        ...
+    ValueError
+
+

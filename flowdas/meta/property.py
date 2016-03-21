@@ -554,7 +554,7 @@ class Property(Type):
         xargs.extend('%s=%s' % (k, repr(v)) for k, v in self._pm_opts_.__dict__.items())
         if opts is not None:
             xargs.extend(opts)
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(args+sorted(xargs)))
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(args + sorted(xargs)))
 
     #
     # ordered property

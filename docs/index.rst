@@ -60,12 +60,11 @@ Guide
    :maxdepth: 2
 
    quickstart
-   properties
-   serialization
-   nesting
    tuple
+   nesting
    union
    inheritance
+   serialization
    extending
 
 API Reference

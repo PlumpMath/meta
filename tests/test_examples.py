@@ -36,7 +36,10 @@ def test_rst(name):
 
 GUIDE = os.path.join(os.path.dirname(__file__), '../docs')
 
-@pytest.mark.parametrize('name', ['quickstart'])
+@pytest.mark.parametrize('name', [
+    'quickstart',
+    'tuple',
+])
 def test_guide(name):
     failure_count, test_count = doctest.testfile(os.path.join(GUIDE, name + '.rst'),
                                                  globs={'meta': meta, 'pprint': pprint}, module_relative=False)
