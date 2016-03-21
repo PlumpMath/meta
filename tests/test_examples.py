@@ -41,6 +41,7 @@ GUIDE = os.path.join(os.path.dirname(__file__), '../docs')
     'tuple',
     'nesting',
     'union',
+    'inheritance',
 ])
 def test_guide(name):
     failure_count, test_count = doctest.testfile(os.path.join(GUIDE, name + '.rst'),
