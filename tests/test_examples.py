@@ -39,6 +39,7 @@ GUIDE = os.path.join(os.path.dirname(__file__), '../docs')
 @pytest.mark.parametrize('name', [
     'quickstart',
     'tuple',
+    'nesting',
 ])
 def test_guide(name):
     failure_count, test_count = doctest.testfile(os.path.join(GUIDE, name + '.rst'),
