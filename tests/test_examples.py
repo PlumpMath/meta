@@ -42,6 +42,7 @@ GUIDE = os.path.join(os.path.dirname(__file__), '../docs')
     'nesting',
     'union',
     'inheritance',
+    'serialization',
 ])
 def test_guide(name):
     failure_count, test_count = doctest.testfile(os.path.join(GUIDE, name + '.rst'),

@@ -65,7 +65,6 @@ Guide
    union
    inheritance
    serialization
-   extending
 
 API Reference
 =============
