@@ -51,7 +51,14 @@ API 의 응답에 URL 이 포함되는데, 문자열로 표현되기도 하고, 
     >>> pprint(r.dump())
     {'self': {'href': 'https://github.com/flowdas/meta', 'meta': {'type': 'git'}}}
 
-``r.self`` 에 대입하면 정의한 두 Property 중에서 올바른 형을 찾는다. 하지만 어트리뷰트이름을 지정하면 원하는 Property 를 선택할 수 있다.
+``r.self`` 에 대입하면 정의한 두 Property 중에서 올바른 형을 찾는다. 물론 찾을 수 없다면 예외를 일으킨다.
+
+    >>> r.self = 1
+    Traceback (most recent call last):
+        ...
+    ValueError
+
+어트리뷰트 이름을 지정하면 원하는 Property 를 선택할 수 있다.
 
     >>> r.self.link = 'https://github.com/flowdas/meta'
     Traceback (most recent call last):

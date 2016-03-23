@@ -7,6 +7,10 @@ from flowdas.meta.compat import *
 from flowdas.meta.property import Marker
 
 
+def test_null():
+    assert not meta.Null
+
+
 def test_property_protocol():
     class P(meta.Property):
         def _load_(self, value, context):
@@ -152,6 +156,12 @@ def test_tuple():
         x.p4 = [123] * 33
 
     check_tuple3567(X)
+
+    with pytest.raises(TypeError):
+        meta.Tuple(None)
+
+    assert repr(meta.Tuple()) == 'Tuple()'
+    assert repr(meta.Tuple(P())) == 'Tuple(P())'
 
 
 def test_default_in_tuple():
@@ -340,6 +350,14 @@ def test_context_local_codec():
     with pytest.raises(LookupError):
         x.dump(meta.Context())
 
+    ctx.set_codec('test', TestCodec())
+
+    x = X()
+    x.a = 123
+    assert x.dump(ctx) == {'a': -123}
+    x = X().load({'a': 789}, ctx)
+    assert x.a == -789
+
 
 def test_overide_options():
     class PositiveInteger(meta.Integer):
@@ -357,8 +375,8 @@ def test_overide_options():
         x.positive = -1
     assert X.positive.get_options().newoption is True
 
-def test_selector():
 
+def test_selector():
     class A(meta.Entity):
         pass
 
@@ -383,4 +401,52 @@ def test_selector():
         x.data = a
     assert x.dump() == {'data': [{}]}
 
+    # error conditions
 
+    with pytest.raises(TypeError):
+        meta.Selector(None)
+
+    class X(meta.Entity):
+        data = meta.Selector(A(), A[:]())
+
+    x = X()
+    with pytest.raises(NotImplementedError):
+        x.data = a
+
+    class X(meta.Entity):
+        @meta.Selector(A(), A[:]())
+        def data(self):
+            return None
+
+    x = X()
+    with pytest.raises(TypeError):
+        x.data = a
+
+    class X(meta.Entity):
+        @meta.Selector(A(), A[:]())
+        def data(self):
+            return 2
+
+    x = X()
+    with pytest.raises(IndexError):
+        x.data = a
+
+
+def test_options():
+    class X(meta.Entity):
+        class Options(meta.Entity.Options):
+            opt = False
+
+    x = X(opt=True)
+    assert x.get_options().opt is True
+
+    assert repr(x.get_options()) == 'Options(opt=True)'
+
+
+def test_context():
+    assert repr(meta.Context()) == 'Context()'
+
+    ctx = meta.Context(strict=True)
+    with pytest.raises(ValueError):
+        x = meta.Entity().load({'x': 1}, ctx)
+    assert repr(ctx) == 'Context(errors=[ValueError(/x?)], strict=True)'

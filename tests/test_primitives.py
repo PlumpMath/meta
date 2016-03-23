@@ -116,6 +116,8 @@ def test_number(P):
 
     if P != meta.Integer:
         success.append(0.1)
+    else:
+        failure.append(0.1)
 
     for value in success:
         x.p = value
@@ -229,9 +231,9 @@ def test_jsonobject():
     class X(meta.Entity):
         p = meta.JsonObject()
 
-    success = [{'a': 1}]
+    success = [{'a': 1, 'b': {}, 'c': []}]
     failure = [False, True, '한', u'한', b'\xed\x95\x9c', 0, 1, long_type(1), 1.0, 0.1, [1], (1,), ['a'], ('b',),
-               entity]
+               entity, {'a': entity}, [entity], {1: 1}]
 
     x = X()
 
@@ -255,8 +257,8 @@ def test_jsonarray():
     class X(meta.Entity):
         p = meta.JsonArray()
 
-    success = [[1], (1,), ['a'], ('b',)]
-    failure = [False, True, '한', u'한', b'\xed\x95\x9c', 0, 1, long_type(1), 1.0, 0.1, {'a': 1}, entity]
+    success = [[1], (1,), ['a'], ('b',), [[], {'a': 1}]]
+    failure = [False, True, '한', u'한', b'\xed\x95\x9c', 0, 1, long_type(1), 1.0, 0.1, {'a': 1}, entity, 'NaN']
 
     x = X()
 
@@ -282,7 +284,7 @@ def test_decimal():
 
     success = [False, True, 0, 1, long_type(1), 1.0, 0.1, MAX_SAFE_INTEGER + 1, -MAX_SAFE_INTEGER - 1, int('9' * 100)]
     failure = ['한', u'한', b'\xed\x95\x9c', [1], (1,), ['a'], ('b',), {'a': 1}, entity,
-               float('nan'), float('inf'), float('-inf')]
+               float('nan'), float('inf'), float('-inf'), decimal.Decimal(float('nan'))]
 
     x = X()
 
@@ -336,7 +338,7 @@ def test_complex():
     success = [False, True, 0, 1, long_type(1), 1.0, 0.1, MAX_SAFE_INTEGER + 1, -MAX_SAFE_INTEGER - 1, 1 + 1j, 1j,
                [1, 1], (1, 1)]
     failure = ['한', u'한', b'\xed\x95\x9c', [1], (1,), ['a'], ('b',), {'a': 1}, entity,
-               float('nan'), float('inf'), float('-inf'), [], [1], [1, 2, 3]]
+               float('nan'), float('inf'), float('-inf'), [], [1], [1, 2, 3], [1, 'a']]
 
     x = X()
 
@@ -758,6 +760,30 @@ def test_rfc822format():
     assert x.dump()['x'] == 'Sun, 06 Mar 2016 15:04:24 GMT'
     assert x.dump()['y'] == 'Sun, 06 Mar 2016 00:00:00 GMT'
     assert x.dump()['z'] == 'Thu, 01 Jan 1970 15:04:24 GMT'
+
+
+def test_duration():
+    class X(meta.Entity):
+        t = meta.Duration()
+
+    x = X()
+    x.t = 10
+    assert x.t == datetime.timedelta(seconds=10)
+    assert x.dump() == {'t': 10.0}
+
+    x.t = datetime.timedelta(hours=1)
+    assert x.dump() == {'t': 3600.0}
+
+    class X(meta.Entity):
+        t = meta.Duration(unit='hours')
+
+    x = X()
+    x.t = 10
+    assert x.t == datetime.timedelta(hours=10)
+    assert x.dump() == {'t': 10.0}
+
+    with pytest.raises(ValueError):
+        x.t = '10'
 
 
 @pytest.mark.skipif(PY3 and PYPY, reason='no usable ipaddress')

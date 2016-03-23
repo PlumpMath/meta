@@ -314,11 +314,13 @@ class Marker(object):
     pending = None
     exc_info = None
 
-    def __init__(self, context, value):
+    def __init__(self, context, value, check=True):
+        self._check = check
         self.value = value
         if context is not None:
-            if id(value) in context._markers:
-                raise OverflowError()
+            if check:
+                if id(value) in context._markers:
+                    raise OverflowError()
             self.context = context
         else:
             self.context = Context()
@@ -328,11 +330,13 @@ class Marker(object):
         return self.context is not None and id(value) in self.context._markers
 
     def __enter__(self):
-        self.context._markers.add(id(self.value))
+        if self._check:
+            self.context._markers.add(id(self.value))
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        self.context._markers.remove(id(self.value))
+        if self._check:
+            self.context._markers.remove(id(self.value))
         if exc_type is None:
             if self.pending:
                 self.context._errtree = self.pending
@@ -709,22 +713,23 @@ class Property(Type):
         return value
 
     def load(self, value, context=None):
-        if value is None:
-            if self._pm_opts_.required:
-                raise ValueError()
-            return None
-        if context is not None and context._explicit_ and self._pm_opts_.codec is not None:
-            for name_or_codec in reversed(self._pm_opts_.codec):
-                if isinstance(name_or_codec, Codec):
-                    codec = name_or_codec
-                else:
-                    codec = context.get_codec(name_or_codec)
-                value = codec.decode(value, self, context)
-        value = self._load_(value, context)
-        if self._pm_opts_.validate is not None:
-            if not self._pm_opts_.validate(value):
-                raise ValueError()
-        return value
+        with Marker(context, value, check=False) as marker:
+            if value is None:
+                if self._pm_opts_.required:
+                    raise ValueError()
+                return None
+            if context is not None and context._explicit_ and self._pm_opts_.codec is not None:
+                for name_or_codec in reversed(self._pm_opts_.codec):
+                    if isinstance(name_or_codec, Codec):
+                        codec = name_or_codec
+                    else:
+                        codec = marker.context.get_codec(name_or_codec)
+                    value = codec.decode(value, self, marker.context)
+            value = self._load_(value, marker.context)
+            if self._pm_opts_.validate is not None:
+                if not self._pm_opts_.validate(value):
+                    raise ValueError()
+            return value
 
     #
     # visibility control
@@ -960,13 +965,14 @@ class Tuple(Container):
         return n
 
     def _load_(self, value, context):
-        if not isinstance(value, (tuple, list)):
-            raise ValueError()
-        n = self._check_length_(value, self._pm_opts_.repeat)
-        if n == 0:
-            return tuple(value)
-        decoded = []
         with Marker(context, value) as marker:
+            if not isinstance(value, (tuple, list)):
+                raise ValueError()
+            n = self._check_length_(value, self._pm_opts_.repeat)
+            if n == 0:
+                return tuple(value)
+            decoded = []
+
             spec = self.get_components()
             unit = len(spec)
             visible = [p._isvisible_(marker.context) for p in spec]
