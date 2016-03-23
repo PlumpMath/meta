@@ -130,6 +130,7 @@ Property 의 ``codec`` 옵션은 하나나 그 이상의 코덱 이름을 요구
     {'title': 'Meta'}
     >>> Book({'title': 'Meta'}, codec='json').dump(meta.Context())
     '{"title":"Meta"}'
+    >>> book = Book(codec='json').load('{"title":"Meta"}', meta.Context())
 
 ``json`` 코덱은 JSON 문자열을 만드는 방법을 제공하는데, 더 간단한 방법도 있다.
 

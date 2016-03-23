@@ -87,11 +87,7 @@ except ImportError:
 
         def tzname(self, dt):
             offset = int(self.offset.total_seconds() // datetime.timedelta(minutes=1).total_seconds())
-            if offset == 0:
-                return 'UTC'
-            elif offset % 60 == 0:
-                return 'GMT%+d' % (offset // 60)
-            elif offset > 0:
+            if offset >= 0:
                 return 'UTC+%02d:%02d' % divmod(offset, 60)
             else:
                 return 'UTC-%02d:%02d' % divmod(-offset, 60)

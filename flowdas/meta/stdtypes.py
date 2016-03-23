@@ -64,9 +64,13 @@ class Primitive(Property):
     def _check_object(self, value, context):
         with Marker(context, value) as marker:
             for key, val in value.items():
+                skip = False
                 with marker.cursor(key, Null):
                     if not isinstance(key, basestring_types):
+                        skip = True
                         raise ValueError()
+                if skip:
+                    continue
                 with marker.cursor(key, val):
                     if not marker.isvisited(val):
                         self._check_json(val, marker.context)

@@ -56,7 +56,9 @@ class TypeBase(object):
                 if isinstance(value, (list, tuple)):
                     if value:
                         setattr(self, name, frozenset(value))
-                elif not isinstance(value, frozenset):
+                elif isinstance(value, set):
+                    setattr(self, name, frozenset(value))
+                else:
                     setattr(self, name, frozenset([value]))
 
     class MetaOptions(Options):

@@ -7,6 +7,10 @@ from flowdas.meta.compat import *
 from flowdas.meta.property import Marker
 
 
+def test_null():
+    assert not meta.Null
+
+
 def test_property_protocol():
     class P(meta.Property):
         def _load_(self, value, context):
@@ -51,11 +55,12 @@ def test_serialization():
     assert 12345 == p.dump(p.load(12345))
 
 
-def check_tuple3567(X):
+def check_tuple35678(X):
     X.p3._bind_('p3', X)
     X.p5._bind_('p5', X)
     X.p6._bind_('p6', X)
     X.p7._bind_('p7', X)
+    X.p8._bind_('p8', X)
 
     x = X()
 
@@ -93,6 +98,15 @@ def check_tuple3567(X):
     with pytest.raises(ValueError):
         x.p7 = [123] * 4
 
+    assert x.p8 is None
+    for i in [2, 5]:
+        x.p8 = [123] * i
+        assert x.p8 == (123,) * i
+    with pytest.raises(ValueError):
+        x.p8 = [123] * 3
+    with pytest.raises(ValueError):
+        x.p8 = [123] * 4
+
 
 def test_tuple():
     class P(meta.Property):
@@ -110,6 +124,7 @@ def test_tuple():
         p5 = meta.Tuple(P(), repeat=5)
         p6 = meta.Tuple(P(), repeat=slice(2, 6, 3))
         p7 = meta.Tuple(P(), repeat=[2, 5])
+        p8 = meta.Tuple(P(), repeat=frozenset([2, 5]))
 
         def _get_(self, name):
             return self.__dict__.get(name)
@@ -151,7 +166,47 @@ def test_tuple():
     with pytest.raises(ValueError):
         x.p4 = [123] * 33
 
-    check_tuple3567(X)
+    check_tuple35678(X)
+
+    with pytest.raises(TypeError):
+        meta.Tuple(None)
+
+    assert repr(meta.Tuple()) == 'Tuple()'
+    assert repr(meta.Tuple(P())) == 'Tuple(P())'
+
+    class X(object):
+        p1 = meta.Tuple(P(), repeat=slice(4, None, -2))
+        p2 = meta.Tuple(P(), repeat=slice(1, 10, 0))
+        p3 = meta.Tuple(repeat=slice(0, 10))
+
+        def _get_(self, name):
+            return self.__dict__.get(name)
+
+        def _set_(self, name, value):
+            self.__dict__[name] = value
+
+        def _delete_(self, name):
+            self.__dict__.pop(name, None)
+
+    X.p1._bind_('p1', X)
+    X.p2._bind_('p2', X)
+    X.p3._bind_('p3', X)
+
+    x = X()
+
+    for i in range(10):
+        if i in {0, 2, 4}:
+            x.p1 = [123] * i
+        else:
+            with pytest.raises(ValueError):
+                x.p1 = [123] * i
+        with pytest.raises(ValueError):
+            x.p2 = [123] * i
+        if i == 0:
+            x.p3 = [123] * i
+        else:
+            with pytest.raises(ValueError):
+                x.p3 = [123] * i
 
 
 def test_default_in_tuple():
@@ -161,6 +216,30 @@ def test_default_in_tuple():
     x = X()
     x.p = (None,)
     assert x.p == (1,)
+
+    class X(meta.Entity):
+        p = meta.Tuple(meta.Integer(default=lambda: 1))
+
+    x = X()
+    x.p = (None,)
+    assert x.p == (1,)
+
+
+def test_view_in_tuple():
+    class X(meta.Entity):
+        p = meta.Tuple(meta.Integer(), meta.String(view='secret'))
+
+    x = X()
+    x.p = (1, 'secret')
+    assert x.p == (1, 'secret')
+
+    ctx = meta.Context(view='nobody')
+    assert x.dump(ctx) == {'p': [1, None]}
+    x = X().load({'p': [1, None]}, ctx)
+    assert x.p == (1, None)
+
+    with pytest.raises(ValueError):
+        X().load({'p': [1, 'secret']}, ctx)
 
 
 def test_tuplization():
@@ -176,6 +255,7 @@ def test_tuplization():
         p5 = P[5]()
         p6 = P[2:6:3]()
         p7 = P[2, 5]()
+        p8 = P[frozenset([2, 5])]()
 
         def _get_(self, name):
             return self.__dict__.get(name)
@@ -186,13 +266,14 @@ def test_tuplization():
         def _delete_(self, name):
             self.__dict__.pop(name, None)
 
-    check_tuple3567(X)
+    check_tuple35678(X)
 
     class X(object):
         p3 = P[Ellipsis]()
         p5 = P[5]()
         p6 = P[2:6:3]()
         p7 = P[2, 5]()
+        p8 = P[frozenset([2, 5])]()
 
         def _get_(self, name):
             return self.__dict__.get(name)
@@ -203,7 +284,7 @@ def test_tuplization():
         def _delete_(self, name):
             self.__dict__.pop(name, None)
 
-    check_tuple3567(X)
+    check_tuple35678(X)
 
 
 def test_marker():
@@ -304,7 +385,7 @@ def test_validate():
 def test_json_codec():
     class X(meta.Entity):
         a = meta.JsonObject()
-        b = meta.JsonObject(codec='json')
+        b = meta.JsonObject(codec=[meta.codec('json')])
 
     x = X()
     data = OrderedDict({'x': 1, 'y': []})
@@ -315,6 +396,10 @@ def test_json_codec():
     x.a = data
     assert x.dump() == {'a': data}
     assert x.dump(meta.Context()) == json.dumps({'a': data}, ensure_ascii=False, separators=(',', ':'))
+
+    x = X().load({'a': data, 'b': json.dumps(data)}, meta.Context())
+    assert x.a == data
+    assert x.b == data
 
 
 def test_context_local_codec():
@@ -340,6 +425,14 @@ def test_context_local_codec():
     with pytest.raises(LookupError):
         x.dump(meta.Context())
 
+    ctx.set_codec('test', TestCodec())
+
+    x = X()
+    x.a = 123
+    assert x.dump(ctx) == {'a': -123}
+    x = X().load({'a': 789}, ctx)
+    assert x.a == -789
+
 
 def test_overide_options():
     class PositiveInteger(meta.Integer):
@@ -357,8 +450,8 @@ def test_overide_options():
         x.positive = -1
     assert X.positive.get_options().newoption is True
 
-def test_selector():
 
+def test_selector():
     class A(meta.Entity):
         pass
 
@@ -383,4 +476,58 @@ def test_selector():
         x.data = a
     assert x.dump() == {'data': [{}]}
 
+    # error conditions
 
+    with pytest.raises(TypeError):
+        meta.Selector(None)
+
+    class X(meta.Entity):
+        data = meta.Selector(A(), A[:]())
+
+    x = X()
+    with pytest.raises(NotImplementedError):
+        x.data = a
+
+    class X(meta.Entity):
+        @meta.Selector(A(), A[:]())
+        def data(self):
+            return None
+
+    x = X()
+    with pytest.raises(TypeError):
+        x.data = a
+
+    class X(meta.Entity):
+        @meta.Selector(A(), A[:]())
+        def data(self):
+            return 2
+
+    x = X()
+    with pytest.raises(IndexError):
+        x.data = a
+
+
+def test_options():
+    class X(meta.Entity):
+        class Options(meta.Entity.Options):
+            opt = False
+
+    x = X(opt=True)
+    assert x.get_options().opt is True
+
+    assert repr(x.get_options()) == 'Options(opt=True)'
+
+    with pytest.raises(TypeError):
+        X(unknown=True)
+
+    with pytest.raises(TypeError):
+        X(required=True, view='public')
+
+
+def test_context():
+    assert repr(meta.Context()) == 'Context()'
+
+    ctx = meta.Context(strict=True)
+    with pytest.raises(ValueError):
+        x = meta.Entity().load({'x': 1}, ctx)
+    assert repr(ctx) == 'Context(errors=[ValueError(/x?)], strict=True)'
