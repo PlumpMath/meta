@@ -427,6 +427,14 @@ def test_uuid():
             x.p = value
 
 
+def test_timezone():
+    now = meta.DateTime.now()
+
+    assert timezone.utc.tzname(now) == 'UTC+00:00'
+    assert timezone(datetime.timedelta(hours=9)).tzname(now) == 'UTC+09:00'
+    assert timezone(datetime.timedelta(hours=-9)).tzname(now) == 'UTC-09:00'
+
+
 def test_datetime():
     class X(meta.Entity):
         p = meta.DateTime(format='unix')

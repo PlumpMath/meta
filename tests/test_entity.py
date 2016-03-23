@@ -195,6 +195,15 @@ def test_declare():
     with pytest.raises(OverflowError):
         p.dump()
 
+    @meta.declare
+    class X: pass
+
+    class X(meta.Entity):
+        x = X(required=True)
+
+    x = X()
+
+    assert X.x.dump(x) == {}
 
 def test_dump_with_hole():
     class X(meta.Entity):
