@@ -12,6 +12,9 @@ flowdas.meta package
 Constants
 ---------
 
+Null
+^^^^
+
 .. py:data:: Null
     :annotation:
 
@@ -29,28 +32,45 @@ Constants
 Functions
 ---------
 
+codec
+^^^^^
+
 .. autofunction:: codec
+
+declare
+^^^^^^^
 
 .. py:decorator:: declare
 
     아직 정의되지 않은 :py:class:`Entity` 를 미리 선언하는데 사용되는 클래스 데코레이터.
 
-    보통 순환 구조를 갖는 :py:class:`Entity` 를 정의할 때 사용된다. 선언되는 :py:class:`Entity` 는 모듈 전역이어야 하며, 동일한 모듈에서 실제 정의가 이루어져야 한다.
+    보통 순환 구조를 갖는 :py:class:`Entity` 를 정의할 때 사용된다.
+    선언되는 :py:class:`Entity` 와 실제 정의가 같은 이름 공간에 위치한다면, 모듈 전역이건 함수 지역이건 상관 없다.
+
     이렇게 전방 선언된 :py:class:`Entity` 는 실제 정의가 제공되는한, 전방 선언 되지 않은 :py:class:`Entity` 와 사용상의 차이는 없다.
     실제 정의가 제공되지 않으면 사용할 때 :py:exc:`ReferenceError` 예외가 발생한다.
 
     자기 참조 :py:class:`Entity` 는 이런식으로 만들 수 있다.
 
-        .. literalinclude:: /../tests/ex/declare.py
+        .. literalinclude:: /../tests/ex/declare.rst
 
     Since version 1.0.
 
 Classes
 -------
 
+Boolean
+^^^^^^^
+
 .. autoclass:: Boolean(**kwargs)
 
+Bytes
+^^^^^
+
 .. autoclass:: Bytes(**kwargs)
+
+Codec
+^^^^^
 
 .. autoclass:: Codec
 
@@ -66,16 +86,30 @@ Classes
 
         Since version 1.0.
 
+Complex
+^^^^^^^
 
 .. autoclass:: Complex(**kwargs)
 
+Context
+^^^^^^^
+
 .. autoclass:: Context(strict=False, view=None)
-    :members: errors, reset
+    :members: errors, reset, set_codec
+
+Date
+^^^^
 
 .. autoclass:: Date(**kwargs)
 
+DateTime
+^^^^^^^^
+
 .. autoclass:: DateTime(**kwargs)
     :members:
+
+DateTimeFormat
+^^^^^^^^^^^^^^
 
 .. autoclass:: DateTimeFormat
     :members: name
@@ -92,9 +126,18 @@ Classes
 
         Since version 1.0.
 
+Decimal
+^^^^^^^
+
 .. autoclass:: Decimal(**kwargs)
 
+Duration
+^^^^^^^^
+
 .. autoclass:: Duration(**kwargs)
+
+Entity
+^^^^^^
 
 .. autoclass:: Entity([other,] **kwargs)
 
@@ -156,6 +199,9 @@ Classes
 
     .. automethod:: values
 
+Entity.MetaOptions
+^^^^^^^^^^^^^^^^^^
+
 .. py:class:: Entity.MetaOptions
 
     :py:class:`Entity` 의 클래스 옵션을 정의하는 내부 클래스.
@@ -166,27 +212,60 @@ Classes
 
     Since version 1.0.
 
+Float
+^^^^^
+
 .. autoclass:: Float(**kwargs)
+
+Integer
+^^^^^^^
 
 .. autoclass:: Integer(**kwargs)
 
+IpAddress
+^^^^^^^^^
+
 .. autoclass:: IpAddress(**kwargs)
+
+Ipv4Address
+^^^^^^^^^^^
 
 .. autoclass:: Ipv4Address(**kwargs)
 
+Ipv6Address
+^^^^^^^^^^^
+
 .. autoclass:: Ipv6Address(**kwargs)
+
+JsonArray
+^^^^^^^^^
 
 .. autoclass:: JsonArray(**kwargs)
 
+JsonObject
+^^^^^^^^^^
+
 .. autoclass:: JsonObject(**kwargs)
+
+Kind
+^^^^
 
 .. autoclass:: Kind([kind,]**kwargs)
 
+Number
+^^^^^^
+
 .. autoclass:: Number(**kwargs)
+
+Primitive
+^^^^^^^^^
 
 .. autoclass:: Primitive(**kwargs)
     :members:
     :undoc-members:
+
+Property
+^^^^^^^^
 
 .. autoclass:: Property(**kwargs)
 
@@ -200,6 +279,9 @@ Classes
 
     .. automethod:: is_ordered
 
+Property.Options
+^^^^^^^^^^^^^^^^
+
 .. py:class:: Property.Options
 
     :py:class:`Property` 의 옵션을 정의하는 내부 클래스.
@@ -211,13 +293,33 @@ Classes
 
     Since version 1.0.
 
+Selector
+^^^^^^^^
+
+.. autoclass:: Selector
+
+String
+^^^^^^
+
 .. autoclass:: String(**kwargs)
+
+Time
+^^^^
 
 .. autoclass:: Time(**kwargs)
 
+Tuple
+^^^^^
+
 .. autoclass:: Tuple
 
+Unicode
+^^^^^^^
+
 .. autoclass:: Unicode(**kwargs)
+
+Union
+^^^^^
 
 .. autoclass:: Union(**kwargs)
 
@@ -248,6 +350,9 @@ Classes
         Since version 1.0.
 
     .. automethod:: validate
+
+Uuid
+^^^^
 
 .. autoclass:: Uuid(**kwargs)
 

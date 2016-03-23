@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Meta: A platform-agnostic library for schema modeling &mdash; Meta 1.0.0a1 documentation</title>
+    <title>Meta: A platform-agnostic library for schema modeling &mdash; Meta 1.0.0 documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.0.0a1',
+        VERSION:     '1.0.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,8 +24,8 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/translations.js"></script>
-    <link rel="top" title="Meta 1.0.0a1 documentation" href="#" />
-    <link rel="next" title="flowdas.meta package" href="api.html" />
+    <link rel="top" title="Meta 1.0.0 documentation" href="#" />
+    <link rel="next" title="Quickstart" href="quickstart.html" />
    
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
@@ -75,10 +75,14 @@
 </div>
 <div class="section" id="install">
 <h1>Install<a class="headerlink" href="#install" title="제목 주소">¶</a></h1>
-<div class="highlight-python"><div class="highlight"><pre><span></span>pip install flowdas-meta==1.0.0a1
+<div class="highlight-python"><div class="highlight"><pre><span></span>pip install flowdas-meta
 </pre></div>
 </div>
 <p>파이썬 2.7 과 3.3+ 를 지원합니다. PyPy 역시 지원됩니다. 같이 설치되는 패키지는 없습니다.</p>
+<p>아직 PyPI 에 배포되지 않은 개발 버전을 설치하는 방법은 이렇습니다.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>pip install git+https://github.com/flowdas/meta.git@develop#egg=flowdas-meta
+</pre></div>
+</div>
 </div>
 <div class="section" id="why">
 <h1>Why?<a class="headerlink" href="#why" title="제목 주소">¶</a></h1>
@@ -97,7 +101,7 @@ Meta 가 갖고 있는 특징이자 한계입니다.</p>
 <dl class="last docutils">
 <dt>클래스 다형성</dt>
 <dd>클래스 계층 구조를 만들고, 계층 구조를 고려한 검사를 수행하며, 역시 계층 구조가 반영된 가역적인 직렬화를 제공합니다.</dd>
-<dt>Union</dt>
+<dt>Union &amp; Selector</dt>
 <dd>여러 종류의 형을 조합하여 그 중의 하나를 표시할 수 있는 방법을 제공합니다.</dd>
 </dl>
 </dd>
@@ -114,19 +118,99 @@ Meta 가 갖고 있는 특징이자 한계입니다.</p>
 <div class="section" id="guide">
 <h1>Guide<a class="headerlink" href="#guide" title="제목 주소">¶</a></h1>
 <div class="toctree-wrapper compound">
-<ul class="simple">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#entity-property">Entity &amp; Property</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#dumping">Dumping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#loading">Loading</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#validation">Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#error">Error</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#builtin-properties">Builtin Properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#options">Options</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tuple.html">Tuple</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tuple.html#id1">Tuple</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tuple.html#repeating">Repeating</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tuple.html#tuplization">Tuplization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tuple.html#entity-array">Entity Array</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="nesting.html">Nesting</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="nesting.html#embedding">Embedding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nesting.html#circular-reference">Circular Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nesting.html#hiding-properties">Hiding Properties</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="union.html">Union</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="union.html#id1">Union</a></li>
+<li class="toctree-l2"><a class="reference internal" href="union.html#selector">Selector</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="inheritance.html">Inheritance</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="inheritance.html#subclassing">Subclassing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="inheritance.html#polymorphic-entity">Polymorphic Entity</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="serialization.html">Serialization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="serialization.html#json-serializable">JSON Serializable</a></li>
+<li class="toctree-l2"><a class="reference internal" href="serialization.html#attribute-name">Attribute Name</a></li>
+<li class="toctree-l2"><a class="reference internal" href="serialization.html#ordering">Ordering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="serialization.html#view">View</a></li>
+<li class="toctree-l2"><a class="reference internal" href="serialization.html#codec">Codec</a></li>
+</ul>
+</li>
 </ul>
 </div>
-<p>TODO</p>
 </div>
 <div class="section" id="api-reference">
 <h1>API Reference<a class="headerlink" href="#api-reference" title="제목 주소">¶</a></h1>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="api.html">flowdas.meta package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="api.html#constants">Constants</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#functions">Functions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#classes">Classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#constants">Constants</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api.html#null">Null</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#functions">Functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api.html#codec">codec</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#declare">declare</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#classes">Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api.html#boolean">Boolean</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#bytes">Bytes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#id1">Codec</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#complex">Complex</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#context">Context</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#date">Date</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#datetime">DateTime</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#datetimeformat">DateTimeFormat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#decimal">Decimal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#duration">Duration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#entity">Entity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#entity-metaoptions">Entity.MetaOptions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#float">Float</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#integer">Integer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#ipaddress">IpAddress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#ipv4address">Ipv4Address</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#ipv6address">Ipv6Address</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#jsonarray">JsonArray</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#jsonobject">JsonObject</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#kind">Kind</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#number">Number</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#primitive">Primitive</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#property">Property</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#property-options">Property.Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#selector">Selector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#string">String</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#time">Time</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#tuple">Tuple</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#unicode">Unicode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#union">Union</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#uuid">Uuid</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -160,7 +244,7 @@ Meta 가 갖고 있는 특징이자 한계입니다.</p>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="#">Documentation overview</a><ul>
-      <li>Next: <a href="api.html" title="다음 장">flowdas.meta package</a></li>
+      <li>Next: <a href="quickstart.html" title="다음 장">Quickstart</a></li>
   </ul></li>
 </ul>
 </div>

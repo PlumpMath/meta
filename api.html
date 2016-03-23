@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>flowdas.meta package &mdash; Meta 1.0.0a1 documentation</title>
+    <title>flowdas.meta package &mdash; Meta 1.0.0 documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.0.0a1',
+        VERSION:     '1.0.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,8 +24,8 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/translations.js"></script>
-    <link rel="top" title="Meta 1.0.0a1 documentation" href="index.html" />
-    <link rel="prev" title="Meta: A platform-agnostic library for schema modeling" href="index.html" />
+    <link rel="top" title="Meta 1.0.0 documentation" href="index.html" />
+    <link rel="prev" title="Serialization" href="serialization.html" />
    
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
@@ -48,6 +48,8 @@
 </div>
 <div class="section" id="constants">
 <h2>Constants<a class="headerlink" href="#constants" title="제목 주소">¶</a></h2>
+<div class="section" id="null">
+<h3>Null<a class="headerlink" href="#null" title="제목 주소">¶</a></h3>
 <dl class="data">
 <dt id="flowdas.meta.Null">
 <code class="descclassname">flowdas.meta.</code><code class="descname">Null</code><a class="headerlink" href="#flowdas.meta.Null" title="정의 주소">¶</a></dt>
@@ -66,8 +68,8 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span>
 <span class="go">{}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">Null</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">a</span> <span class="ow">is</span> <span class="n">meta</span><span class="o">.</span><span class="n">Null</span>
-<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">a</span>
+<span class="go">Null</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">a</span> <span class="ow">is</span> <span class="bp">None</span>
 <span class="go">False</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span>
@@ -82,8 +84,11 @@
 </dd></dl>
 
 </div>
+</div>
 <div class="section" id="functions">
 <h2>Functions<a class="headerlink" href="#functions" title="제목 주소">¶</a></h2>
+<div class="section" id="codec">
+<h3>codec<a class="headerlink" href="#codec" title="제목 주소">¶</a></h3>
 <dl class="function">
 <dt id="flowdas.meta.codec">
 <code class="descclassname">flowdas.meta.</code><code class="descname">codec</code><span class="sig-paren">(</span><em>name</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#flowdas.meta.codec" title="정의 주소">¶</a></dt>
@@ -105,32 +110,36 @@
 <p>Since version 1.0.</p>
 </dd></dl>
 
+</div>
+<div class="section" id="declare">
+<h3>declare<a class="headerlink" href="#declare" title="제목 주소">¶</a></h3>
 <dl class="function">
 <dt id="flowdas.meta.declare">
 <code class="descclassname">&#64;</code><code class="descclassname">flowdas.meta.</code><code class="descname">declare</code><a class="headerlink" href="#flowdas.meta.declare" title="정의 주소">¶</a></dt>
 <dd><p>아직 정의되지 않은 <a class="reference internal" href="#flowdas.meta.Entity" title="flowdas.meta.Entity"><code class="xref py py-class docutils literal"><span class="pre">Entity</span></code></a> 를 미리 선언하는데 사용되는 클래스 데코레이터.</p>
-<p>보통 순환 구조를 갖는 <a class="reference internal" href="#flowdas.meta.Entity" title="flowdas.meta.Entity"><code class="xref py py-class docutils literal"><span class="pre">Entity</span></code></a> 를 정의할 때 사용된다. 선언되는 <a class="reference internal" href="#flowdas.meta.Entity" title="flowdas.meta.Entity"><code class="xref py py-class docutils literal"><span class="pre">Entity</span></code></a> 는 모듈 전역이어야 하며, 동일한 모듈에서 실제 정의가 이루어져야 한다.
-이렇게 전방 선언된 <a class="reference internal" href="#flowdas.meta.Entity" title="flowdas.meta.Entity"><code class="xref py py-class docutils literal"><span class="pre">Entity</span></code></a> 는 실제 정의가 제공되는한, 전방 선언 되지 않은 <a class="reference internal" href="#flowdas.meta.Entity" title="flowdas.meta.Entity"><code class="xref py py-class docutils literal"><span class="pre">Entity</span></code></a> 와 사용상의 차이는 없다.
+<p>보통 순환 구조를 갖는 <a class="reference internal" href="#flowdas.meta.Entity" title="flowdas.meta.Entity"><code class="xref py py-class docutils literal"><span class="pre">Entity</span></code></a> 를 정의할 때 사용된다.
+선언되는 <a class="reference internal" href="#flowdas.meta.Entity" title="flowdas.meta.Entity"><code class="xref py py-class docutils literal"><span class="pre">Entity</span></code></a> 와 실제 정의가 같은 이름 공간에 위치한다면, 모듈 전역이건 함수 지역이건 상관 없다.</p>
+<p>이렇게 전방 선언된 <a class="reference internal" href="#flowdas.meta.Entity" title="flowdas.meta.Entity"><code class="xref py py-class docutils literal"><span class="pre">Entity</span></code></a> 는 실제 정의가 제공되는한, 전방 선언 되지 않은 <a class="reference internal" href="#flowdas.meta.Entity" title="flowdas.meta.Entity"><code class="xref py py-class docutils literal"><span class="pre">Entity</span></code></a> 와 사용상의 차이는 없다.
 실제 정의가 제공되지 않으면 사용할 때 <a class="reference external" href="http://docs.python.org/3/library/exceptions.html#ReferenceError" title="(in Python v3.5)"><code class="xref py py-exc docutils literal"><span class="pre">ReferenceError</span></code></a> 예외가 발생한다.</p>
 <p>자기 참조 <a class="reference internal" href="#flowdas.meta.Entity" title="flowdas.meta.Entity"><code class="xref py py-class docutils literal"><span class="pre">Entity</span></code></a> 는 이런식으로 만들 수 있다.</p>
 <blockquote>
-<div><div class="highlight-python"><div class="highlight"><pre><span></span><span class="nd">@meta.declare</span>
-<span class="k">class</span> <span class="nc">X</span><span class="p">:</span> <span class="k">pass</span>
-
-<span class="c1"># 실제 정의가 뒤따른다.</span>
-<span class="k">class</span> <span class="nc">X</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">Entity</span><span class="p">):</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="n">X</span><span class="p">()</span> <span class="c1"># 자기 참조</span>
-
-<span class="c1"># 전방 선언.</span>
-<span class="nd">@meta.declare</span>
-<span class="k">class</span> <span class="nc">Child</span><span class="p">:</span> <span class="k">pass</span>
-
-<span class="k">class</span> <span class="nc">Mother</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">Entity</span><span class="p">):</span>
-    <span class="n">children</span> <span class="o">=</span> <span class="n">Child</span><span class="p">[:]()</span> <span class="c1"># 순환 참조. 튜플화도 가능.</span>
-
-<span class="c1"># 실제 정의가 뒤따른다.</span>
-<span class="k">class</span> <span class="nc">Child</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">Entity</span><span class="p">):</span>
-    <span class="n">mother</span> <span class="o">=</span> <span class="n">Mother</span><span class="p">()</span>
+<div><div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nd">@meta.declare</span>
+<span class="gp">... </span><span class="k">class</span> <span class="nc">X</span><span class="p">:</span> <span class="k">pass</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># 실제 정의가 뒤따른다.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">X</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">Entity</span><span class="p">):</span>
+<span class="gp">... </span>   <span class="n">x</span> <span class="o">=</span> <span class="n">X</span><span class="p">()</span> <span class="c1"># 자기 참조</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># 전방 선언.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nd">@meta.declare</span>
+<span class="gp">... </span><span class="k">class</span> <span class="nc">Child</span><span class="p">:</span> <span class="k">pass</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Mother</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">Entity</span><span class="p">):</span>
+<span class="gp">... </span>   <span class="n">children</span> <span class="o">=</span> <span class="n">Child</span><span class="p">[:]()</span> <span class="c1"># 순환 참조. 튜플화도 가능.</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># 실제 정의가 뒤따른다.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Child</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">Entity</span><span class="p">):</span>
+<span class="gp">... </span>   <span class="n">mother</span> <span class="o">=</span> <span class="n">Mother</span><span class="p">()</span>
 </pre></div>
 </div>
 </div></blockquote>
@@ -138,8 +147,11 @@
 </dd></dl>
 
 </div>
+</div>
 <div class="section" id="classes">
 <h2>Classes<a class="headerlink" href="#classes" title="제목 주소">¶</a></h2>
+<div class="section" id="boolean">
+<h3>Boolean<a class="headerlink" href="#boolean" title="제목 주소">¶</a></h3>
 <dl class="class">
 <dt id="flowdas.meta.Boolean">
 <em class="property">class </em><code class="descclassname">flowdas.meta.</code><code class="descname">Boolean</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#flowdas.meta.Boolean" title="정의 주소">¶</a></dt>
@@ -156,6 +168,9 @@
 <p>Since version 1.0.</p>
 </dd></dl>
 
+</div>
+<div class="section" id="bytes">
+<h3>Bytes<a class="headerlink" href="#bytes" title="제목 주소">¶</a></h3>
 <dl class="class">
 <dt id="flowdas.meta.Bytes">
 <em class="property">class </em><code class="descclassname">flowdas.meta.</code><code class="descname">Bytes</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#flowdas.meta.Bytes" title="정의 주소">¶</a></dt>
@@ -179,6 +194,9 @@
 <p>Since version 1.0.</p>
 </dd></dl>
 
+</div>
+<div class="section" id="id1">
+<h3>Codec<a class="headerlink" href="#id1" title="제목 주소">¶</a></h3>
 <dl class="class">
 <dt id="flowdas.meta.Codec">
 <em class="property">class </em><code class="descclassname">flowdas.meta.</code><code class="descname">Codec</code><a class="headerlink" href="#flowdas.meta.Codec" title="정의 주소">¶</a></dt>
@@ -248,6 +266,9 @@
 
 </dd></dl>
 
+</div>
+<div class="section" id="complex">
+<h3>Complex<a class="headerlink" href="#complex" title="제목 주소">¶</a></h3>
 <dl class="class">
 <dt id="flowdas.meta.Complex">
 <em class="property">class </em><code class="descclassname">flowdas.meta.</code><code class="descname">Complex</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#flowdas.meta.Complex" title="정의 주소">¶</a></dt>
@@ -276,6 +297,9 @@
 <p>Since version 1.0.</p>
 </dd></dl>
 
+</div>
+<div class="section" id="context">
+<h3>Context<a class="headerlink" href="#context" title="제목 주소">¶</a></h3>
 <dl class="class">
 <dt id="flowdas.meta.Context">
 <em class="property">class </em><code class="descclassname">flowdas.meta.</code><code class="descname">Context</code><span class="sig-paren">(</span><em>strict=False</em>, <em>view=None</em><span class="sig-paren">)</span><a class="headerlink" href="#flowdas.meta.Context" title="정의 주소">¶</a></dt>
@@ -367,8 +391,19 @@
 <p>Since version 1.0.</p>
 </dd></dl>
 
+<dl class="method">
+<dt id="flowdas.meta.Context.set_codec">
+<code class="descname">set_codec</code><span class="sig-paren">(</span><em>name</em>, <em>codec</em><span class="sig-paren">)</span><a class="headerlink" href="#flowdas.meta.Context.set_codec" title="정의 주소">¶</a></dt>
+<dd><p>Context-local <a class="reference internal" href="#flowdas.meta.Codec" title="flowdas.meta.Codec"><code class="xref py py-class docutils literal"><span class="pre">Codec</span></code></a> 을 등록한다.</p>
+<p><code class="docutils literal"><span class="pre">codec</span></code> 으로 <a class="reference internal" href="#flowdas.meta.Codec" title="flowdas.meta.Codec"><code class="xref py py-class docutils literal"><span class="pre">Codec</span></code></a> 의 인스턴스를 제공하면,
+<a class="reference internal" href="#flowdas.meta.Context" title="flowdas.meta.Context"><code class="xref py py-class docutils literal"><span class="pre">Context</span></code></a> 별로 다른 <a class="reference internal" href="#flowdas.meta.Codec" title="flowdas.meta.Codec"><code class="xref py py-class docutils literal"><span class="pre">Codec</span></code></a> 이 사용되도록 할 수 있다.</p>
 </dd></dl>
 
+</dd></dl>
+
+</div>
+<div class="section" id="date">
+<h3>Date<a class="headerlink" href="#date" title="제목 주소">¶</a></h3>
 <dl class="class">
 <dt id="flowdas.meta.Date">
 <em class="property">class </em><code class="descclassname">flowdas.meta.</code><code class="descname">Date</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#flowdas.meta.Date" title="정의 주소">¶</a></dt>
@@ -431,6 +466,9 @@
 <p>Since version 1.0.</p>
 </dd></dl>
 
+</div>
+<div class="section" id="datetime">
+<h3>DateTime<a class="headerlink" href="#datetime" title="제목 주소">¶</a></h3>
 <dl class="class">
 <dt id="flowdas.meta.DateTime">
 <em class="property">class </em><code class="descclassname">flowdas.meta.</code><code class="descname">DateTime</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#flowdas.meta.DateTime" title="정의 주소">¶</a></dt>
@@ -520,6 +558,9 @@ UTC 의 경우는 <cite>Z</cite> 를 그외의 경우는 <cite>+hh:mm</cite> 이
 
 </dd></dl>
 
+</div>
+<div class="section" id="datetimeformat">
+<h3>DateTimeFormat<a class="headerlink" href="#datetimeformat" title="제목 주소">¶</a></h3>
 <dl class="class">
 <dt id="flowdas.meta.DateTimeFormat">
 <em class="property">class </em><code class="descclassname">flowdas.meta.</code><code class="descname">DateTimeFormat</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#flowdas.meta.DateTimeFormat" title="정의 주소">¶</a></dt>
@@ -593,6 +634,9 @@ UTC 의 경우는 <cite>Z</cite> 를 그외의 경우는 <cite>+hh:mm</cite> 이
 
 </dd></dl>
 
+</div>
+<div class="section" id="decimal">
+<h3>Decimal<a class="headerlink" href="#decimal" title="제목 주소">¶</a></h3>
 <dl class="class">
 <dt id="flowdas.meta.Decimal">
 <em class="property">class </em><code class="descclassname">flowdas.meta.</code><code class="descname">Decimal</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#flowdas.meta.Decimal" title="정의 주소">¶</a></dt>
@@ -625,6 +669,9 @@ UTC 의 경우는 <cite>Z</cite> 를 그외의 경우는 <cite>+hh:mm</cite> 이
 <p>Since version 1.0.</p>
 </dd></dl>
 
+</div>
+<div class="section" id="duration">
+<h3>Duration<a class="headerlink" href="#duration" title="제목 주소">¶</a></h3>
 <dl class="class">
 <dt id="flowdas.meta.Duration">
 <em class="property">class </em><code class="descclassname">flowdas.meta.</code><code class="descname">Duration</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#flowdas.meta.Duration" title="정의 주소">¶</a></dt>
@@ -663,6 +710,9 @@ UTC 의 경우는 <cite>Z</cite> 를 그외의 경우는 <cite>+hh:mm</cite> 이
 <p>Since version 1.0.</p>
 </dd></dl>
 
+</div>
+<div class="section" id="entity">
+<h3>Entity<a class="headerlink" href="#entity" title="제목 주소">¶</a></h3>
 <dl class="class">
 <dt id="flowdas.meta.Entity">
 <em class="property">class </em><code class="descclassname">flowdas.meta.</code><code class="descname">Entity</code><span class="sig-paren">(</span><span class="optional">[</span><em>other</em>, <span class="optional">]</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#flowdas.meta.Entity" title="정의 주소">¶</a></dt>
@@ -697,19 +747,16 @@ UTC 의 경우는 <cite>Z</cite> 를 그외의 경우는 <cite>+hh:mm</cite> 이
 <p><a class="reference internal" href="#flowdas.meta.Entity.dump" title="flowdas.meta.Entity.dump"><code class="xref py py-meth docutils literal"><span class="pre">Entity.dump()</span></code></a> 할 때 <a class="reference external" href="http://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">dict</span></code></a> 를 출력한다.</p>
 <p><a class="reference internal" href="#flowdas.meta.Property" title="flowdas.meta.Property"><code class="xref py py-class docutils literal"><span class="pre">Property</span></code></a> 의 모든 옵션을 지원하고, 다음과 같은 추가 옵션을 제공한다.</p>
 <dl class="docutils">
-<dt>exclude</dt>
-<dd><a class="reference internal" href="#flowdas.meta.Property" title="flowdas.meta.Property"><code class="xref py py-class docutils literal"><span class="pre">Property</span></code></a> 어트리뷰트의 이름이나 그 목록을 제공하면 serialization 과정에서 해당 <a class="reference internal" href="#flowdas.meta.Property" title="flowdas.meta.Property"><code class="xref py py-class docutils literal"><span class="pre">Property</span></code></a> 들이 정의되지
-않은 것처럼 취급한다.</dd>
 <dt>only</dt>
 <dd><p class="first"><a class="reference internal" href="#flowdas.meta.Property" title="flowdas.meta.Property"><code class="xref py py-class docutils literal"><span class="pre">Property</span></code></a> 어트리뷰트의 이름이나 그 목록을 제공하면 serialization 과정에서 지정한 것들 외의 모든 <a class="reference internal" href="#flowdas.meta.Property" title="flowdas.meta.Property"><code class="xref py py-class docutils literal"><span class="pre">Property</span></code></a>
-들이 정의되지 않은 것처럼 취급한다. <code class="docutils literal"><span class="pre">exclude</span></code> 에 포함된 이름이 있으면 역시 제거된다.</p>
-<p><code class="docutils literal"><span class="pre">exclude</span></code> 와 <code class="docutils literal"><span class="pre">only</span></code> 옵션의 기능응 <code class="docutils literal"><span class="pre">view</span></code> 옵션과 중첩되는 부분이 있다.
+들이 정의되지 않은 것처럼 취급한다.</p>
+<p><code class="docutils literal"><span class="pre">only</span></code> 옵션의 기능응 <code class="docutils literal"><span class="pre">view</span></code> 옵션과 중첩되는 부분이 있다.
 하지만 <code class="docutils literal"><span class="pre">view</span></code> 와는 달리 두 옵션은 <a class="reference internal" href="#flowdas.meta.Context" title="flowdas.meta.Context"><code class="xref py py-class docutils literal"><span class="pre">Context</span></code></a> 의 설정에 영향받지 않기 때문에,
 문맥과 무관한 <a class="reference internal" href="#flowdas.meta.Entity" title="flowdas.meta.Entity"><code class="xref py py-class docutils literal"><span class="pre">Entity</span></code></a> 의 구조적 특성을 표현할 때 사용된다.</p>
 <p>주의해야할 점은 <a class="reference internal" href="#flowdas.meta.Entity.load" title="flowdas.meta.Entity.load"><code class="xref py py-meth docutils literal"><span class="pre">Entity.load()</span></code></a> 로 인스턴스가 만들어질 때 이 옵션을 물려받는다는 것이다.
 이 인스턴스의 다른 <a class="reference internal" href="#flowdas.meta.Property" title="flowdas.meta.Property"><code class="xref py py-class docutils literal"><span class="pre">Property</span></code></a> 들을 설정한 후 <a class="reference internal" href="#flowdas.meta.Entity.dump" title="flowdas.meta.Entity.dump"><code class="xref py py-meth docutils literal"><span class="pre">Entity.dump()</span></code></a> 해도 출력되지 않는다.
 이 동작이 문제가 될 경우 회피하는 간단한 방법은 이 인스턴스를 인자로 사용해서 다른 인스턴스를 하나 만드는 것이다.</p>
-<p><code class="docutils literal"><span class="pre">only</span></code> 와 <code class="docutils literal"><span class="pre">exclude</span></code> 는 <code class="docutils literal"><span class="pre">required=True</span></code> 인 <a class="reference internal" href="#flowdas.meta.Property" title="flowdas.meta.Property"><code class="xref py py-class docutils literal"><span class="pre">Property</span></code></a> 를 제거할 수 없다.</p>
+<p><code class="docutils literal"><span class="pre">only</span></code> 는 <code class="docutils literal"><span class="pre">required=True</span></code> 인 <a class="reference internal" href="#flowdas.meta.Property" title="flowdas.meta.Property"><code class="xref py py-class docutils literal"><span class="pre">Property</span></code></a> 를 제거할 수 없다.</p>
 <blockquote class="last">
 <div><div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Identifier</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">Entity</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="nb">type</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">Kind</span><span class="p">()</span>
@@ -816,7 +863,7 @@ UTC 의 경우는 <cite>Z</cite> 를 그외의 경우는 <cite>+hh:mm</cite> 이
 이 메쏘드를 구현하는 것이 훨씬 수월한 작업이다.</p>
 <p>모든 <a class="reference internal" href="#flowdas.meta.Property" title="flowdas.meta.Property"><code class="xref py py-class docutils literal"><span class="pre">Property</span></code></a> 들의 검사가 완료되고, 문제가 없을 때만 호출된다.
 때문에 <a class="reference internal" href="#flowdas.meta.Property" title="flowdas.meta.Property"><code class="xref py py-class docutils literal"><span class="pre">Property</span></code></a> 들 간의 상호 관계만 조사하면 된다.</p>
-<p>하지만 <code class="docutils literal"><span class="pre">view</span></code>, <code class="docutils literal"><span class="pre">only</span></code>, <code class="docutils literal"><span class="pre">exclude</span></code> 옵션들을 사용할 경우는 꽤 복잡해질 수 있다. 다음과 같은 원칙이 도움이 될 수 있다.</p>
+<p>하지만 <code class="docutils literal"><span class="pre">view</span></code>, <code class="docutils literal"><span class="pre">only</span></code> 옵션들을 사용할 경우는 꽤 복잡해질 수 있다. 다음과 같은 원칙이 도움이 될 수 있다.</p>
 <ol class="arabic simple">
 <li><code class="docutils literal"><span class="pre">required</span></code> <a class="reference internal" href="#flowdas.meta.Property" title="flowdas.meta.Property"><code class="xref py py-class docutils literal"><span class="pre">Property</span></code></a> 들은 그냥 검사한다.</li>
 <li>그 외의 <a class="reference internal" href="#flowdas.meta.Property" title="flowdas.meta.Property"><code class="xref py py-class docutils literal"><span class="pre">Property</span></code></a> 들은 <a class="reference internal" href="#flowdas.meta.Entity.get_if_visible" title="flowdas.meta.Entity.get_if_visible"><code class="xref py py-meth docutils literal"><span class="pre">Entity.get_if_visible()</span></code></a> 로 값을 얻어서 None 이 아닌 경우만 검사한다.</li>
@@ -1124,6 +1171,9 @@ UTC 의 경우는 <cite>Z</cite> 를 그외의 경우는 <cite>+hh:mm</cite> 이
 
 </dd></dl>
 
+</div>
+<div class="section" id="entity-metaoptions">
+<h3>Entity.MetaOptions<a class="headerlink" href="#entity-metaoptions" title="제목 주소">¶</a></h3>
 <dl class="class">
 <dt id="flowdas.meta.Entity.MetaOptions">
 <em class="property">class </em><code class="descclassname">Entity.</code><code class="descname">MetaOptions</code><a class="headerlink" href="#flowdas.meta.Entity.MetaOptions" title="정의 주소">¶</a></dt>
@@ -1146,6 +1196,9 @@ UTC 의 경우는 <cite>Z</cite> 를 그외의 경우는 <cite>+hh:mm</cite> 이
 <p>Since version 1.0.</p>
 </dd></dl>
 
+</div>
+<div class="section" id="float">
+<h3>Float<a class="headerlink" href="#float" title="제목 주소">¶</a></h3>
 <dl class="class">
 <dt id="flowdas.meta.Float">
 <em class="property">class </em><code class="descclassname">flowdas.meta.</code><code class="descname">Float</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#flowdas.meta.Float" title="정의 주소">¶</a></dt>
@@ -1162,6 +1215,9 @@ UTC 의 경우는 <cite>Z</cite> 를 그외의 경우는 <cite>+hh:mm</cite> 이
 <p>Since version 1.0.</p>
 </dd></dl>
 
+</div>
+<div class="section" id="integer">
+<h3>Integer<a class="headerlink" href="#integer" title="제목 주소">¶</a></h3>
 <dl class="class">
 <dt id="flowdas.meta.Integer">
 <em class="property">class </em><code class="descclassname">flowdas.meta.</code><code class="descname">Integer</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#flowdas.meta.Integer" title="정의 주소">¶</a></dt>
@@ -1179,6 +1235,9 @@ UTC 의 경우는 <cite>Z</cite> 를 그외의 경우는 <cite>+hh:mm</cite> 이
 <p>Since version 1.0.</p>
 </dd></dl>
 
+</div>
+<div class="section" id="ipaddress">
+<h3>IpAddress<a class="headerlink" href="#ipaddress" title="제목 주소">¶</a></h3>
 <dl class="class">
 <dt id="flowdas.meta.IpAddress">
 <em class="property">class </em><code class="descclassname">flowdas.meta.</code><code class="descname">IpAddress</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#flowdas.meta.IpAddress" title="정의 주소">¶</a></dt>
@@ -1198,6 +1257,9 @@ UTC 의 경우는 <cite>Z</cite> 를 그외의 경우는 <cite>+hh:mm</cite> 이
 <p>Since version 1.0.</p>
 </dd></dl>
 
+</div>
+<div class="section" id="ipv4address">
+<h3>Ipv4Address<a class="headerlink" href="#ipv4address" title="제목 주소">¶</a></h3>
 <dl class="class">
 <dt id="flowdas.meta.Ipv4Address">
 <em class="property">class </em><code class="descclassname">flowdas.meta.</code><code class="descname">Ipv4Address</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#flowdas.meta.Ipv4Address" title="정의 주소">¶</a></dt>
@@ -1217,6 +1279,9 @@ UTC 의 경우는 <cite>Z</cite> 를 그외의 경우는 <cite>+hh:mm</cite> 이
 <p>Since version 1.0.</p>
 </dd></dl>
 
+</div>
+<div class="section" id="ipv6address">
+<h3>Ipv6Address<a class="headerlink" href="#ipv6address" title="제목 주소">¶</a></h3>
 <dl class="class">
 <dt id="flowdas.meta.Ipv6Address">
 <em class="property">class </em><code class="descclassname">flowdas.meta.</code><code class="descname">Ipv6Address</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#flowdas.meta.Ipv6Address" title="정의 주소">¶</a></dt>
@@ -1236,6 +1301,9 @@ UTC 의 경우는 <cite>Z</cite> 를 그외의 경우는 <cite>+hh:mm</cite> 이
 <p>Since version 1.0.</p>
 </dd></dl>
 
+</div>
+<div class="section" id="jsonarray">
+<h3>JsonArray<a class="headerlink" href="#jsonarray" title="제목 주소">¶</a></h3>
 <dl class="class">
 <dt id="flowdas.meta.JsonArray">
 <em class="property">class </em><code class="descclassname">flowdas.meta.</code><code class="descname">JsonArray</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#flowdas.meta.JsonArray" title="정의 주소">¶</a></dt>
@@ -1253,6 +1321,9 @@ UTC 의 경우는 <cite>Z</cite> 를 그외의 경우는 <cite>+hh:mm</cite> 이
 <p>Since version 1.0.</p>
 </dd></dl>
 
+</div>
+<div class="section" id="jsonobject">
+<h3>JsonObject<a class="headerlink" href="#jsonobject" title="제목 주소">¶</a></h3>
 <dl class="class">
 <dt id="flowdas.meta.JsonObject">
 <em class="property">class </em><code class="descclassname">flowdas.meta.</code><code class="descname">JsonObject</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#flowdas.meta.JsonObject" title="정의 주소">¶</a></dt>
@@ -1270,6 +1341,9 @@ UTC 의 경우는 <cite>Z</cite> 를 그외의 경우는 <cite>+hh:mm</cite> 이
 <p>Since version 1.0.</p>
 </dd></dl>
 
+</div>
+<div class="section" id="kind">
+<h3>Kind<a class="headerlink" href="#kind" title="제목 주소">¶</a></h3>
 <dl class="class">
 <dt id="flowdas.meta.Kind">
 <em class="property">class </em><code class="descclassname">flowdas.meta.</code><code class="descname">Kind</code><span class="sig-paren">(</span><span class="optional">[</span><em>kind</em>, <span class="optional">]</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#flowdas.meta.Kind" title="정의 주소">¶</a></dt>
@@ -1320,6 +1394,9 @@ UTC 의 경우는 <cite>Z</cite> 를 그외의 경우는 <cite>+hh:mm</cite> 이
 <p>Since version 1.0.</p>
 </dd></dl>
 
+</div>
+<div class="section" id="number">
+<h3>Number<a class="headerlink" href="#number" title="제목 주소">¶</a></h3>
 <dl class="class">
 <dt id="flowdas.meta.Number">
 <em class="property">class </em><code class="descclassname">flowdas.meta.</code><code class="descname">Number</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#flowdas.meta.Number" title="정의 주소">¶</a></dt>
@@ -1354,6 +1431,9 @@ UTC 의 경우는 <cite>Z</cite> 를 그외의 경우는 <cite>+hh:mm</cite> 이
 <p>Since version 1.0.</p>
 </dd></dl>
 
+</div>
+<div class="section" id="primitive">
+<h3>Primitive<a class="headerlink" href="#primitive" title="제목 주소">¶</a></h3>
 <dl class="class">
 <dt id="flowdas.meta.Primitive">
 <em class="property">class </em><code class="descclassname">flowdas.meta.</code><code class="descname">Primitive</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#flowdas.meta.Primitive" title="정의 주소">¶</a></dt>
@@ -1397,6 +1477,9 @@ UTC 의 경우는 <cite>Z</cite> 를 그외의 경우는 <cite>+hh:mm</cite> 이
 <p>Since version 1.0.</p>
 </dd></dl>
 
+</div>
+<div class="section" id="property">
+<h3>Property<a class="headerlink" href="#property" title="제목 주소">¶</a></h3>
 <dl class="class">
 <dt id="flowdas.meta.Property">
 <em class="property">class </em><code class="descclassname">flowdas.meta.</code><code class="descname">Property</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#flowdas.meta.Property" title="정의 주소">¶</a></dt>
@@ -1670,6 +1753,9 @@ False 를 돌려주면 <a class="reference external" href="http://docs.python.or
 
 </dd></dl>
 
+</div>
+<div class="section" id="property-options">
+<h3>Property.Options<a class="headerlink" href="#property-options" title="제목 주소">¶</a></h3>
 <dl class="class">
 <dt id="flowdas.meta.Property.Options">
 <em class="property">class </em><code class="descclassname">Property.</code><code class="descname">Options</code><a class="headerlink" href="#flowdas.meta.Property.Options" title="정의 주소">¶</a></dt>
@@ -1701,6 +1787,57 @@ False 를 돌려주면 <a class="reference external" href="http://docs.python.or
 <p>Since version 1.0.</p>
 </dd></dl>
 
+</div>
+<div class="section" id="selector">
+<h3>Selector<a class="headerlink" href="#selector" title="제목 주소">¶</a></h3>
+<dl class="class">
+<dt id="flowdas.meta.Selector">
+<em class="property">class </em><code class="descclassname">flowdas.meta.</code><code class="descname">Selector</code><span class="sig-paren">(</span><em>*properties</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#flowdas.meta.Selector" title="정의 주소">¶</a></dt>
+<dd><p><a class="reference internal" href="#flowdas.meta.Entity" title="flowdas.meta.Entity"><code class="xref py py-class docutils literal"><span class="pre">Entity</span></code></a> 의 옵션에 따라 형이 결정되는 <a class="reference internal" href="#flowdas.meta.Property" title="flowdas.meta.Property"><code class="xref py py-class docutils literal"><span class="pre">Property</span></code></a>.</p>
+<p>데코레이터 문법을 사용해서 <code class="docutils literal"><span class="pre">properties</span></code> 로 제공한 <a class="reference internal" href="#flowdas.meta.Property" title="flowdas.meta.Property"><code class="xref py py-class docutils literal"><span class="pre">Property</span></code></a> 들 중 하나를 선택하는 메쏘드를 제공한다.</p>
+<p>메쏘드는 <code class="docutils literal"><span class="pre">[0,</span> <span class="pre">len(properties))</span></code> 범위의 정수를 돌려주어야 한다.</p>
+<p>이 메쏘드는 다른 <a class="reference internal" href="#flowdas.meta.Property" title="flowdas.meta.Property"><code class="xref py py-class docutils literal"><span class="pre">Property</span></code></a> 들을 참조할 수는 없으나 <a class="reference internal" href="#flowdas.meta.Entity" title="flowdas.meta.Entity"><code class="xref py py-class docutils literal"><span class="pre">Entity</span></code></a> 의 옵션을 참조할 수는 있다.</p>
+<p><a class="reference internal" href="#flowdas.meta.Property" title="flowdas.meta.Property"><code class="xref py py-class docutils literal"><span class="pre">Property</span></code></a> 의 모든 옵션을 지원한다.</p>
+<p>Example</p>
+<blockquote>
+<div><div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Resource</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">Entity</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="nb">id</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">String</span><span class="p">()</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Response</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">Entity</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">class</span> <span class="nc">Options</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">Entity</span><span class="o">.</span><span class="n">Options</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="n">many</span> <span class="o">=</span> <span class="bp">False</span>
+<span class="gp">...</span>
+<span class="gp">... </span>    <span class="nd">@meta.Selector</span><span class="p">(</span><span class="n">Resource</span><span class="p">(),</span> <span class="n">Resource</span><span class="p">[:]())</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_options</span><span class="p">()</span><span class="o">.</span><span class="n">many</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">resource</span> <span class="o">=</span> <span class="n">Resource</span><span class="p">({</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;article-1&#39;</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">Response</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">resource</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span>
+<span class="go">{&#39;data&#39;: {&#39;id&#39;: &#39;article-1&#39;}}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">response</span><span class="p">]</span>
+<span class="gt">Traceback (most recent call last):</span>
+    <span class="o">...</span>
+<span class="gr">ValueError</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">Response</span><span class="p">(</span><span class="n">many</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">resource</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span>
+<span class="go">{&#39;data&#39;: [{&#39;id&#39;: &#39;article-1&#39;}]}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">resource</span>
+<span class="gt">Traceback (most recent call last):</span>
+    <span class="o">...</span>
+<span class="gr">ValueError</span>
+
+</pre></div>
+</div>
+</div></blockquote>
+<p>Since version 1.0.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="string">
+<h3>String<a class="headerlink" href="#string" title="제목 주소">¶</a></h3>
 <dl class="class">
 <dt id="flowdas.meta.String">
 <em class="property">class </em><code class="descclassname">flowdas.meta.</code><code class="descname">String</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#flowdas.meta.String" title="정의 주소">¶</a></dt>
@@ -1723,6 +1860,9 @@ False 를 돌려주면 <a class="reference external" href="http://docs.python.or
 <p>Since version 1.0.</p>
 </dd></dl>
 
+</div>
+<div class="section" id="time">
+<h3>Time<a class="headerlink" href="#time" title="제목 주소">¶</a></h3>
 <dl class="class">
 <dt id="flowdas.meta.Time">
 <em class="property">class </em><code class="descclassname">flowdas.meta.</code><code class="descname">Time</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#flowdas.meta.Time" title="정의 주소">¶</a></dt>
@@ -1795,14 +1935,17 @@ UTC 의 경우는 <cite>Z</cite> 를 그외의 경우는 <cite>+hh:mm</cite> 이
 <p>Since version 1.0.</p>
 </dd></dl>
 
+</div>
+<div class="section" id="tuple">
+<h3>Tuple<a class="headerlink" href="#tuple" title="제목 주소">¶</a></h3>
 <dl class="class">
 <dt id="flowdas.meta.Tuple">
-<em class="property">class </em><code class="descclassname">flowdas.meta.</code><code class="descname">Tuple</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#flowdas.meta.Tuple" title="정의 주소">¶</a></dt>
+<em class="property">class </em><code class="descclassname">flowdas.meta.</code><code class="descname">Tuple</code><span class="sig-paren">(</span><em>*properties</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#flowdas.meta.Tuple" title="정의 주소">¶</a></dt>
 <dd><p>정해진 형태를 갖는 <a class="reference external" href="http://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">tuple</span></code></a> 을 표현하는 <a class="reference internal" href="#flowdas.meta.Property" title="flowdas.meta.Property"><code class="xref py py-class docutils literal"><span class="pre">Property</span></code></a>.</p>
-<p><code class="docutils literal"><span class="pre">args</span></code> 로 제공한 <a class="reference internal" href="#flowdas.meta.Property" title="flowdas.meta.Property"><code class="xref py py-class docutils literal"><span class="pre">Property</span></code></a> 의 목록과 일치하는 형태의 <a class="reference external" href="http://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">tuple</span></code></a> 이나 <a class="reference external" href="http://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">list</span></code></a> 를 받아들이고,
+<p><code class="docutils literal"><span class="pre">properties</span></code> 로 제공한 <a class="reference internal" href="#flowdas.meta.Property" title="flowdas.meta.Property"><code class="xref py py-class docutils literal"><span class="pre">Property</span></code></a> 의 목록과 일치하는 형태의 <a class="reference external" href="http://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">tuple</span></code></a> 이나 <a class="reference external" href="http://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">list</span></code></a> 를 받아들이고,
 <a class="reference external" href="http://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">tuple</span></code></a> 로 변환한다.</p>
-<p><code class="docutils literal"><span class="pre">args</span></code> 올 수 있는 <a class="reference internal" href="#flowdas.meta.Property" title="flowdas.meta.Property"><code class="xref py py-class docutils literal"><span class="pre">Property</span></code></a> 에 제약은 없다. 때문에 임의의 깊이로 중첩할 수 있다.</p>
-<p><a class="reference external" href="http://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">tuple</span></code></a> 이 None 을 포함할 수 있느냐는 <code class="docutils literal"><span class="pre">args</span></code> 로 제공된 <a class="reference internal" href="#flowdas.meta.Property" title="flowdas.meta.Property"><code class="xref py py-class docutils literal"><span class="pre">Property</span></code></a> 들의 <code class="docutils literal"><span class="pre">required</span></code> 옵션이 결정한다.</p>
+<p><code class="docutils literal"><span class="pre">properties</span></code> 올 수 있는 <a class="reference internal" href="#flowdas.meta.Property" title="flowdas.meta.Property"><code class="xref py py-class docutils literal"><span class="pre">Property</span></code></a> 에 제약은 없다. 때문에 임의의 깊이로 중첩할 수 있다.</p>
+<p><a class="reference external" href="http://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">tuple</span></code></a> 이 None 을 포함할 수 있느냐는 <code class="docutils literal"><span class="pre">properties</span></code> 로 제공된 <a class="reference internal" href="#flowdas.meta.Property" title="flowdas.meta.Property"><code class="xref py py-class docutils literal"><span class="pre">Property</span></code></a> 들의 <code class="docutils literal"><span class="pre">required</span></code> 옵션이 결정한다.</p>
 <p><a class="reference internal" href="#flowdas.meta.Entity.dump" title="flowdas.meta.Entity.dump"><code class="xref py py-meth docutils literal"><span class="pre">Entity.dump()</span></code></a> 할 때 <a class="reference external" href="http://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">list</span></code></a> 를 출력한다.</p>
 <p><a class="reference internal" href="#flowdas.meta.Property" title="flowdas.meta.Property"><code class="xref py py-class docutils literal"><span class="pre">Property</span></code></a> 의 모든 옵션을 지원하고, 다음과 같은 추가 옵션을 제공한다.</p>
 <dl class="docutils">
@@ -1813,7 +1956,7 @@ UTC 의 경우는 <cite>Z</cite> 를 그외의 경우는 <cite>+hh:mm</cite> 이
 <li><a class="reference external" href="http://docs.python.org/3/library/functions.html#slice" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">slice</span></code></a></li>
 <li><a class="reference external" href="http://docs.python.org/3/library/constants.html#Ellipsis" title="(in Python v3.5)"><code class="xref py py-data docutils literal"><span class="pre">Ellipsis</span></code></a></li>
 </ul>
-<p>모두 <code class="docutils literal"><span class="pre">args</span></code> 로 지정된 단위가 몇번 등장할 수 있는지를 지정한다. <a class="reference external" href="http://docs.python.org/3/library/constants.html#Ellipsis" title="(in Python v3.5)"><code class="xref py py-data docutils literal"><span class="pre">Ellipsis</span></code></a> 는 길이 제약이 없다는 뜻이고, 정수나 그 목록은
+<p>모두 <code class="docutils literal"><span class="pre">properties</span></code> 로 지정된 단위가 몇번 등장할 수 있는지를 지정한다. <a class="reference external" href="http://docs.python.org/3/library/constants.html#Ellipsis" title="(in Python v3.5)"><code class="xref py py-data docutils literal"><span class="pre">Ellipsis</span></code></a> 는 길이 제약이 없다는 뜻이고, 정수나 그 목록은
 지정한 횟수로 제한한다는 뜻이고, <a class="reference external" href="http://docs.python.org/3/library/functions.html#slice" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">slice</span></code></a> 는 범위를 표현한다.</p>
 <p class="last">기본 값은 1.</p>
 </dd>
@@ -1851,6 +1994,9 @@ UTC 의 경우는 <cite>Z</cite> 를 그외의 경우는 <cite>+hh:mm</cite> 이
 <p>Since version 1.0.</p>
 </dd></dl>
 
+</div>
+<div class="section" id="unicode">
+<h3>Unicode<a class="headerlink" href="#unicode" title="제목 주소">¶</a></h3>
 <dl class="class">
 <dt id="flowdas.meta.Unicode">
 <em class="property">class </em><code class="descclassname">flowdas.meta.</code><code class="descname">Unicode</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#flowdas.meta.Unicode" title="정의 주소">¶</a></dt>
@@ -1874,6 +2020,9 @@ UTC 의 경우는 <cite>Z</cite> 를 그외의 경우는 <cite>+hh:mm</cite> 이
 <p>Since version 1.0.</p>
 </dd></dl>
 
+</div>
+<div class="section" id="union">
+<h3>Union<a class="headerlink" href="#union" title="제목 주소">¶</a></h3>
 <dl class="class">
 <dt id="flowdas.meta.Union">
 <em class="property">class </em><code class="descclassname">flowdas.meta.</code><code class="descname">Union</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#flowdas.meta.Union" title="정의 주소">¶</a></dt>
@@ -1985,6 +2134,9 @@ UTC 의 경우는 <cite>Z</cite> 를 그외의 경우는 <cite>+hh:mm</cite> 이
 
 </dd></dl>
 
+</div>
+<div class="section" id="uuid">
+<h3>Uuid<a class="headerlink" href="#uuid" title="제목 주소">¶</a></h3>
 <dl class="class">
 <dt id="flowdas.meta.Uuid">
 <em class="property">class </em><code class="descclassname">flowdas.meta.</code><code class="descname">Uuid</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#flowdas.meta.Uuid" title="정의 주소">¶</a></dt>
@@ -2004,6 +2156,7 @@ UTC 의 경우는 <cite>Z</cite> 를 그외의 경우는 <cite>+hh:mm</cite> 이
 
 </div>
 </div>
+</div>
 
 
           </div>
@@ -2014,9 +2167,49 @@ UTC 의 경우는 <cite>Z</cite> 를 그외의 경우는 <cite>+hh:mm</cite> 이
   <h3><a href="index.html">목차</a></h3>
   <ul>
 <li><a class="reference internal" href="#">flowdas.meta package</a><ul>
-<li><a class="reference internal" href="#constants">Constants</a></li>
-<li><a class="reference internal" href="#functions">Functions</a></li>
-<li><a class="reference internal" href="#classes">Classes</a></li>
+<li><a class="reference internal" href="#constants">Constants</a><ul>
+<li><a class="reference internal" href="#null">Null</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#functions">Functions</a><ul>
+<li><a class="reference internal" href="#codec">codec</a></li>
+<li><a class="reference internal" href="#declare">declare</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#classes">Classes</a><ul>
+<li><a class="reference internal" href="#boolean">Boolean</a></li>
+<li><a class="reference internal" href="#bytes">Bytes</a></li>
+<li><a class="reference internal" href="#id1">Codec</a></li>
+<li><a class="reference internal" href="#complex">Complex</a></li>
+<li><a class="reference internal" href="#context">Context</a></li>
+<li><a class="reference internal" href="#date">Date</a></li>
+<li><a class="reference internal" href="#datetime">DateTime</a></li>
+<li><a class="reference internal" href="#datetimeformat">DateTimeFormat</a></li>
+<li><a class="reference internal" href="#decimal">Decimal</a></li>
+<li><a class="reference internal" href="#duration">Duration</a></li>
+<li><a class="reference internal" href="#entity">Entity</a></li>
+<li><a class="reference internal" href="#entity-metaoptions">Entity.MetaOptions</a></li>
+<li><a class="reference internal" href="#float">Float</a></li>
+<li><a class="reference internal" href="#integer">Integer</a></li>
+<li><a class="reference internal" href="#ipaddress">IpAddress</a></li>
+<li><a class="reference internal" href="#ipv4address">Ipv4Address</a></li>
+<li><a class="reference internal" href="#ipv6address">Ipv6Address</a></li>
+<li><a class="reference internal" href="#jsonarray">JsonArray</a></li>
+<li><a class="reference internal" href="#jsonobject">JsonObject</a></li>
+<li><a class="reference internal" href="#kind">Kind</a></li>
+<li><a class="reference internal" href="#number">Number</a></li>
+<li><a class="reference internal" href="#primitive">Primitive</a></li>
+<li><a class="reference internal" href="#property">Property</a></li>
+<li><a class="reference internal" href="#property-options">Property.Options</a></li>
+<li><a class="reference internal" href="#selector">Selector</a></li>
+<li><a class="reference internal" href="#string">String</a></li>
+<li><a class="reference internal" href="#time">Time</a></li>
+<li><a class="reference internal" href="#tuple">Tuple</a></li>
+<li><a class="reference internal" href="#unicode">Unicode</a></li>
+<li><a class="reference internal" href="#union">Union</a></li>
+<li><a class="reference internal" href="#uuid">Uuid</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -2024,7 +2217,7 @@ UTC 의 경우는 <cite>Z</cite> 를 그외의 경우는 <cite>+hh:mm</cite> 이
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="index.html" title="이전 장">Meta: A platform-agnostic library for schema modeling</a></li>
+      <li>Previous: <a href="serialization.html" title="이전 장">Serialization</a></li>
   </ul></li>
 </ul>
 </div>

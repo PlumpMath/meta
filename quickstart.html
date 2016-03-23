@@ -1,0 +1,465 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Quickstart &mdash; Meta 1.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/translations.js"></script>
+    <link rel="top" title="Meta 1.0.0 documentation" href="index.html" />
+    <link rel="next" title="Tuple" href="tuple.html" />
+    <link rel="prev" title="Meta: A platform-agnostic library for schema modeling" href="index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="quickstart">
+<h1>Quickstart<a class="headerlink" href="#quickstart" title="제목 주소">¶</a></h1>
+<p>자료 구조를 정의하는 기본 문법을 소개하고, 직렬화와 검사를 다룬다.</p>
+<div class="section" id="entity-property">
+<h2>Entity &amp; Property<a class="headerlink" href="#entity-property" title="제목 주소">¶</a></h2>
+<p>Meta 가 제공하는 가장 기본적인 도구는 Entity 인데, 자료 구조를 표현한다. Entity 를 정의는 방법은 클래스를 정의하는 방법과 같다.
+즉 <a class="reference internal" href="api.html#flowdas.meta.Entity" title="flowdas.meta.Entity"><code class="xref py py-class docutils literal"><span class="pre">Entity</span></code></a> 를 계승하고, 클래스 어트리뷰트로 자료 구조의 속성들을 정의한다.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">flowdas</span> <span class="kn">import</span> <span class="n">meta</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Book</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">Entity</span><span class="p">):</span>
+<span class="gp">... </span>   <span class="n">title</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">String</span><span class="p">()</span>
+<span class="gp">... </span>   <span class="n">published</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">Date</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Book</span>
+<span class="go">class Book(published=Date(), title=String())</span>
+</pre></div>
+</div>
+<p>이제 모든 <code class="docutils literal"><span class="pre">Book</span></code> 의 인스턴스는 <code class="docutils literal"><span class="pre">title</span></code> 과 <code class="docutils literal"><span class="pre">published</span></code> 를 속성으로 갖게 된다.
+인스턴스를 처음 만들면 모든 속성은 None 값을 갖는다.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">book</span> <span class="o">=</span> <span class="n">Book</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">book</span>
+<span class="go">Book()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">book</span><span class="o">.</span><span class="n">title</span> <span class="ow">is</span> <span class="bp">None</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">book</span><span class="o">.</span><span class="n">published</span> <span class="ow">is</span> <span class="bp">None</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>이제 속성에 값을 줄 수 있다.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">book</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Meta&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">book</span><span class="o">.</span><span class="n">title</span>
+<span class="go">&#39;Meta&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">book</span><span class="o">.</span><span class="n">published</span> <span class="o">=</span> <span class="s1">&#39;2016-03-15&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">book</span><span class="o">.</span><span class="n">published</span>
+<span class="go">datetime.date(2016, 3, 15)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">book</span>
+<span class="go">Book(dict(published=datetime.date(2016, 3, 15), title=&#39;Meta&#39;))</span>
+</pre></div>
+</div>
+<p>속성에 형을 부여하는 것을 Property 라고 한다.
+가령 <code class="docutils literal"><span class="pre">title</span></code> 은 문자열(<a class="reference internal" href="api.html#flowdas.meta.String" title="flowdas.meta.String"><code class="xref py py-class docutils literal"><span class="pre">String</span></code></a>), <code class="docutils literal"><span class="pre">published</span></code> 는 날짜(<a class="reference internal" href="api.html#flowdas.meta.Date" title="flowdas.meta.Date"><code class="xref py py-class docutils literal"><span class="pre">Date</span></code></a>)로 제한된다.
+잘못된 값은 받아들이지 않는다.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">book</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="gt">Traceback (most recent call last):</span>
+    <span class="o">...</span>
+<span class="gr">ValueError</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">book</span><span class="o">.</span><span class="n">published</span> <span class="o">=</span> <span class="s1">&#39;abc&#39;</span>
+<span class="gt">Traceback (most recent call last):</span>
+    <span class="o">...</span>
+<span class="gr">ValueError</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">published</span></code> 는 문자열(<code class="docutils literal"><span class="pre">'2016-03-15'</span></code>)을 제공했는데, 실제 속성의 값은 <a class="reference external" href="http://docs.python.org/3/library/datetime.html#datetime.date" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">datetime.date</span></code></a> 의 인스턴스다.
+물론 <code class="docutils literal"><span class="pre">published</span></code> 는 <a class="reference external" href="http://docs.python.org/3/library/datetime.html#datetime.date" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">datetime.date</span></code></a> 의 인스턴스도 받아들인다.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">datetime</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">book</span><span class="o">.</span><span class="n">published</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="mi">2016</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">book</span><span class="o">.</span><span class="n">published</span>
+<span class="go">datetime.date(2016, 3, 15)</span>
+</pre></div>
+</div>
+<p>이처럼 Property 들은 속성의 값으로 제공하는 형이 정해져 있는데, 대부분 파이썬의 내장형이거나 표준 라이브러리가 제공하는 형이다.
+<a class="reference internal" href="api.html#flowdas.meta.Date" title="flowdas.meta.Date"><code class="xref py py-class docutils literal"><span class="pre">Date</span></code></a> 에서 볼 수 있는 것처럼 이 속성에 대입할 수 있는 값의 범위는 더 넓다.</p>
+<p>속성들의 값을 읽거나 쓰는데, <a class="reference external" href="http://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">dict</span></code></a> 와 같은 문법을 사용해도 된다.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">book</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Meta&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">book</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]</span>
+<span class="go">&#39;Meta&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">book</span><span class="p">[</span><span class="s1">&#39;published&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;2016-03-15&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">book</span><span class="p">[</span><span class="s1">&#39;published&#39;</span><span class="p">]</span>
+<span class="go">datetime.date(2016, 3, 15)</span>
+</pre></div>
+</div>
+<p>이외에도 Entity 는 최대한 <a class="reference external" href="http://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">dict</span></code></a> 와 유사한 방식으로 사용될 수 있도록 지원한다.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">book</span> <span class="o">=</span> <span class="n">Book</span><span class="p">({</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;Meta&#39;</span><span class="p">,</span> <span class="s1">&#39;published&#39;</span><span class="p">:</span> <span class="s1">&#39;2016-03-15&#39;</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">book</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Meta&#39;</span><span class="p">,</span> <span class="n">published</span><span class="o">=</span><span class="s1">&#39;2016-03-15&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">sorted</span><span class="p">(</span><span class="n">book</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+<span class="go">[(&#39;published&#39;, datetime.date(2016, 3, 15)), (&#39;title&#39;, &#39;Meta&#39;)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">book</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;Meta&#39;</span><span class="p">,</span> <span class="s1">&#39;published&#39;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="mi">2016</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">15</span><span class="p">)}</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">bool</span><span class="p">(</span><span class="n">book</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">bool</span><span class="p">(</span><span class="n">Book</span><span class="p">())</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<p>속성을 지울수도 있다. 일 단 지워지면 다시 None 값이 제공된다.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">book</span><span class="o">.</span><span class="n">published</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">book</span><span class="p">[</span><span class="s1">&#39;published&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">repr</span><span class="p">(</span><span class="n">book</span><span class="o">.</span><span class="n">published</span><span class="p">)</span>
+<span class="go">&#39;None&#39;</span>
+</pre></div>
+</div>
+<p>None 값이 읽힌다 하더라도, 값이 None 인 속성은 없는 것처럼 취급된다.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">book</span>
+<span class="go">Book(dict(title=&#39;Meta&#39;))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">book</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+<span class="go">[(&#39;title&#39;, &#39;Meta&#39;)]</span>
+</pre></div>
+</div>
+<p>때문에 None 을 대입하는 것 역시 지우는 것과 같다.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">book</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">book</span>
+<span class="go">Book()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">book</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+<span class="go">[]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="dumping">
+<h2>Dumping<a class="headerlink" href="#dumping" title="제목 주소">¶</a></h2>
+<p><a class="reference internal" href="api.html#flowdas.meta.Entity.dump" title="flowdas.meta.Entity.dump"><code class="xref py py-meth docutils literal"><span class="pre">Entity.dump()</span></code></a> 메쏘드를 사용하면 Entity 를 <a class="reference external" href="http://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">dict</span></code></a> 로 변환할 수 있는데, 이를 직렬화(serialization)라고 부른다.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">book</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Meta&#39;</span><span class="p">,</span> <span class="n">published</span><span class="o">=</span><span class="s1">&#39;2016-03-15&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pprint</span><span class="p">(</span><span class="n">book</span><span class="o">.</span><span class="n">dump</span><span class="p">())</span>
+<span class="go">{&#39;published&#39;: &#39;2016-03-15&#39;, &#39;title&#39;: &#39;Meta&#39;}</span>
+</pre></div>
+</div>
+<p>이 <a class="reference external" href="http://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">dict</span></code></a> 는 <code class="xref py py-meth docutils literal"><span class="pre">json.dumps()</span></code> 에 바로 넘겨줄 수 있는 형태의 값들로만 구성된다.
+<code class="docutils literal"><span class="pre">published</span></code> 는 <a class="reference external" href="http://docs.python.org/3/library/datetime.html#datetime.date" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">datetime.date</span></code></a> 이 아닌 문자열로 변환되고 있다.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">json</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">book</span><span class="o">.</span><span class="n">dump</span><span class="p">(),</span> <span class="n">sort_keys</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="go">&#39;{&quot;published&quot;: &quot;2016-03-15&quot;, &quot;title&quot;: &quot;Meta&quot;}&#39;</span>
+</pre></div>
+</div>
+<p>앞서 살펴보았듯이 속성에 None 값을 주는 것은 지우는 것과 같고, 지워진 속성은 없는 것처럼 취급되기 때문에 <a class="reference internal" href="api.html#flowdas.meta.Entity.dump" title="flowdas.meta.Entity.dump"><code class="xref py py-meth docutils literal"><span class="pre">Entity.dump()</span></code></a> 에서도 제외된다.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">book</span><span class="o">.</span><span class="n">published</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">book</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span>
+<span class="go">{&#39;title&#39;: &#39;Meta&#39;}</span>
+</pre></div>
+</div>
+<p>None 값을 출력하고 싶다면 <a class="reference internal" href="api.html#flowdas.meta.Null" title="flowdas.meta.Null"><code class="xref py py-data docutils literal"><span class="pre">Null</span></code></a> 을 사용하면 된다.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">book</span><span class="o">.</span><span class="n">published</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">Null</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">book</span>
+<span class="go">Book(dict(published=Null, title=&#39;Meta&#39;))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pprint</span><span class="p">(</span><span class="n">book</span><span class="o">.</span><span class="n">dump</span><span class="p">())</span>
+<span class="go">{&#39;published&#39;: None, &#39;title&#39;: &#39;Meta&#39;}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="loading">
+<h2>Loading<a class="headerlink" href="#loading" title="제목 주소">¶</a></h2>
+<p><a class="reference internal" href="api.html#flowdas.meta.Entity.load" title="flowdas.meta.Entity.load"><code class="xref py py-meth docutils literal"><span class="pre">Entity.load()</span></code></a> 는 <a class="reference internal" href="api.html#flowdas.meta.Entity.dump" title="flowdas.meta.Entity.dump"><code class="xref py py-meth docutils literal"><span class="pre">Entity.dump()</span></code></a> 의 역함수다.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">book</span> <span class="o">=</span> <span class="n">Book</span><span class="p">()</span><span class="o">.</span><span class="n">load</span><span class="p">({</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;Meta&#39;</span><span class="p">,</span> <span class="s1">&#39;published&#39;</span><span class="p">:</span> <span class="s1">&#39;2016-03-15&#39;</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">book</span> <span class="o">==</span> <span class="n">Book</span><span class="p">({</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;Meta&#39;</span><span class="p">,</span> <span class="s1">&#39;published&#39;</span><span class="p">:</span> <span class="s1">&#39;2016-03-15&#39;</span><span class="p">})</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">Book.load</span></code> 라고 표현하지 않고, <code class="docutils literal"><span class="pre">Book().load</span></code> 라고 표현하는 것에 주목해야 한다.
+<a class="reference internal" href="api.html#flowdas.meta.Entity.load" title="flowdas.meta.Entity.load"><code class="xref py py-meth docutils literal"><span class="pre">Entity.load()</span></code></a> 는 <code class="docutils literal"><span class="pre">&#64;classmethod</span></code> 가 아니다. <a class="reference internal" href="api.html#flowdas.meta.Entity.load" title="flowdas.meta.Entity.load"><code class="xref py py-meth docutils literal"><span class="pre">Entity.load()</span></code></a> 의 동작에 영향을 줄 수 있는
+옵션이 <code class="docutils literal"><span class="pre">Book()</span></code> 에 제공될 수 있기 때문인데, 당장은 <a class="reference internal" href="api.html#flowdas.meta.Entity.load" title="flowdas.meta.Entity.load"><code class="xref py py-meth docutils literal"><span class="pre">Entity.load()</span></code></a> 를 호출할 때 항상 인스턴스가 필요하다는 것만 기억하면 된다.</p>
+<p><a class="reference internal" href="api.html#flowdas.meta.Entity.dump" title="flowdas.meta.Entity.dump"><code class="xref py py-meth docutils literal"><span class="pre">Entity.dump()</span></code></a> 와는 반대로, 데이터에 None 이 포함되어 있는 경우 <a class="reference internal" href="api.html#flowdas.meta.Null" title="flowdas.meta.Null"><code class="xref py py-data docutils literal"><span class="pre">Null</span></code></a> 로 변환된다.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">book</span> <span class="o">=</span> <span class="n">Book</span><span class="p">()</span><span class="o">.</span><span class="n">load</span><span class="p">({</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;Meta&#39;</span><span class="p">,</span> <span class="s1">&#39;published&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">book</span><span class="o">.</span><span class="n">published</span>
+<span class="go">Null</span>
+</pre></div>
+</div>
+<p>속성에 값을 직접 대입할 때와 마찬가지로, 값에 문제가 있으면 <a class="reference internal" href="api.html#flowdas.meta.Entity.load" title="flowdas.meta.Entity.load"><code class="xref py py-meth docutils literal"><span class="pre">Entity.load()</span></code></a> 도 예외를 일으킨다.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">book</span> <span class="o">=</span> <span class="n">Book</span><span class="p">()</span><span class="o">.</span><span class="n">load</span><span class="p">({</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;Meta&#39;</span><span class="p">,</span> <span class="s1">&#39;published&#39;</span><span class="p">:</span> <span class="s1">&#39;abc&#39;</span><span class="p">})</span>
+<span class="gt">Traceback (most recent call last):</span>
+    <span class="o">...</span>
+<span class="gr">ValueError</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="validation">
+<h2>Validation<a class="headerlink" href="#validation" title="제목 주소">¶</a></h2>
+<p>잘못된 값을 대입하거나 <a class="reference internal" href="api.html#flowdas.meta.Entity.load" title="flowdas.meta.Entity.load"><code class="xref py py-meth docutils literal"><span class="pre">Entity.load()</span></code></a> 하는 경우 예외가 발생하는데, 암묵적으로 검사(validation) 이 수행되고 있기 때문이다.
+그런데 검사는 이 것으로만 한정되지 않는다. 가령 자료 구조를 정의할 때 반드시 필요한 속성이라는 조건을 줄 수 있다.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Book</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">Entity</span><span class="p">):</span>
+<span class="gp">... </span>   <span class="n">title</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">... </span>   <span class="n">published</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">Date</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Book</span>
+<span class="go">class Book(published=Date(), title=String(required=True))</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">required</span></code> 옵션을 사용해서 <code class="docutils literal"><span class="pre">title</span></code> 속성이 반드시 필요하다고 선언했다. 하지만 이 값을 제공하지 않고도 인스턴스를 만들 수 있다.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">book</span> <span class="o">=</span> <span class="n">Book</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">repr</span><span class="p">(</span><span class="n">book</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>
+<span class="go">&#39;None&#39;</span>
+</pre></div>
+</div>
+<p>다만 이 값에 None 이나 <a class="reference internal" href="api.html#flowdas.meta.Null" title="flowdas.meta.Null"><code class="xref py py-data docutils literal"><span class="pre">Null</span></code></a> 을 대입하는 것은 더이상 허락되지 않는다.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">book</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="gt">Traceback (most recent call last):</span>
+    <span class="o">...</span>
+<span class="gr">ValueError</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">book</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">Null</span>
+<span class="gt">Traceback (most recent call last):</span>
+    <span class="o">...</span>
+<span class="gr">ValueError</span>
+</pre></div>
+</div>
+<p>하지만 값을 대입하지 않는 경우 예외는 일어나지 않고, <a class="reference internal" href="api.html#flowdas.meta.Entity.load" title="flowdas.meta.Entity.load"><code class="xref py py-meth docutils literal"><span class="pre">Entity.load()</span></code></a> 하는 데이터에 값이 등장하지 않는 경우도 예외는 발생하지 않는다.
+더군다나 <code class="docutils literal"><span class="pre">del</span></code> 을 사용해서 속성을 지우는 것은 여전히 허락된다.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">book</span><span class="o">.</span><span class="n">title</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">book</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p><a class="reference internal" href="api.html#flowdas.meta.Entity.validate" title="flowdas.meta.Entity.validate"><code class="xref py py-meth docutils literal"><span class="pre">Entity.validate()</span></code></a> 메쏘드로 현재 인스턴스가 이 조건을 만족하는지 검사할 수 있다.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">book</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
+<span class="gt">Traceback (most recent call last):</span>
+    <span class="o">...</span>
+<span class="gr">ValueError</span>
+</pre></div>
+</div>
+<p>때문에 검사가 필요한 경우 <a class="reference internal" href="api.html#flowdas.meta.Entity.load" title="flowdas.meta.Entity.load"><code class="xref py py-meth docutils literal"><span class="pre">Entity.load()</span></code></a> 뒤에 <a class="reference internal" href="api.html#flowdas.meta.Entity.validate" title="flowdas.meta.Entity.validate"><code class="xref py py-meth docutils literal"><span class="pre">Entity.validate()</span></code></a> 를 호출하는 것이 일반적인 사용법이다.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">book</span> <span class="o">=</span> <span class="n">Book</span><span class="p">()</span><span class="o">.</span><span class="n">load</span><span class="p">({</span><span class="s1">&#39;published&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">book</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
+<span class="gt">Traceback (most recent call last):</span>
+    <span class="o">...</span>
+<span class="gr">ValueError</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="error">
+<h2>Error<a class="headerlink" href="#error" title="제목 주소">¶</a></h2>
+<p><a class="reference internal" href="api.html#flowdas.meta.Entity.load" title="flowdas.meta.Entity.load"><code class="xref py py-meth docutils literal"><span class="pre">Entity.load()</span></code></a> 나 <a class="reference internal" href="api.html#flowdas.meta.Entity.validate" title="flowdas.meta.Entity.validate"><code class="xref py py-meth docutils literal"><span class="pre">Entity.validate()</span></code></a> 에서 예외가 발생하는 경우, 구체적으로 어디에 문제가 있는지 확인해야 할 경우가 있다.
+이 때 <a class="reference internal" href="api.html#flowdas.meta.Context" title="flowdas.meta.Context"><code class="xref py py-class docutils literal"><span class="pre">Context</span></code></a> 를 전달할 수 있는데, <a class="reference internal" href="api.html#flowdas.meta.Context.errors" title="flowdas.meta.Context.errors"><code class="xref py py-attr docutils literal"><span class="pre">Context.errors</span></code></a> 로 에러 정보가 제공된다.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ctx</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">Context</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">book</span> <span class="o">=</span> <span class="n">Book</span><span class="p">()</span><span class="o">.</span><span class="n">load</span><span class="p">({</span><span class="s1">&#39;title&#39;</span><span class="p">:</span><span class="bp">None</span><span class="p">},</span> <span class="n">ctx</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+    <span class="o">...</span>
+<span class="gr">ValueError</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ctx</span><span class="o">.</span><span class="n">errors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">location</span>
+<span class="go">&#39;/title&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">repr</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">errors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+<span class="go">&#39;None&#39;</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">'/title'</span></code> 이라는 위치에서 예외가 발생했으며, 문제를 일으킨 값은 None 이라는 의미다.
+위치를 나타내는 문자열은 <a class="reference external" href="https://tools.ietf.org/html/rfc6901">JSON Pointer</a> 규격을 사용하고 있다.</p>
+<p><a class="reference internal" href="api.html#flowdas.meta.Entity.validate" title="flowdas.meta.Entity.validate"><code class="xref py py-meth docutils literal"><span class="pre">Entity.validate()</span></code></a> 도 마찬가지다.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ctx</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">Context</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">book</span> <span class="o">=</span> <span class="n">Book</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">book</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+    <span class="o">...</span>
+<span class="gr">ValueError</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ctx</span><span class="o">.</span><span class="n">errors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">location</span>
+<span class="go">&#39;/title&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">repr</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">errors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+<span class="go">&#39;None&#39;</span>
+</pre></div>
+</div>
+<p>똑 같아 보이지만 한가지 차이가 있다.
+<a class="reference internal" href="api.html#flowdas.meta.Entity.load" title="flowdas.meta.Entity.load"><code class="xref py py-meth docutils literal"><span class="pre">Entity.load()</span></code></a> 의 경우 <code class="docutils literal"><span class="pre">location</span></code> 과 <code class="docutils literal"><span class="pre">value</span></code> 는 입력으로 주어진 데이터(<code class="docutils literal"><span class="pre">{'title':None}</span></code>)를 가리킨다.
+반면에 <a class="reference internal" href="api.html#flowdas.meta.Entity.validate" title="flowdas.meta.Entity.validate"><code class="xref py py-meth docutils literal"><span class="pre">Entity.validate()</span></code></a> 는 검사의 대상이 되는 Entity 인스턴스(<code class="docutils literal"><span class="pre">book</span></code>) 을 가리킨다.
+지금은 두 경우 모두 같은 값을 주지만, 늘 그런 것은 아니다.</p>
+<p>보통는 첫번째 에러가 발생할 때 예외를 일으키고, <a class="reference internal" href="api.html#flowdas.meta.Context.errors" title="flowdas.meta.Context.errors"><code class="xref py py-attr docutils literal"><span class="pre">Context.errors</span></code></a> 에는 하나의 에러만 기록된다.
+하지만 <code class="docutils literal"><span class="pre">max_errors</span></code> 옵션을 사용하면 여러개의 문제를 한번에 검출할 수 있다.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ctx</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">Context</span><span class="p">(</span><span class="n">max_errors</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">book</span> <span class="o">=</span> <span class="n">Book</span><span class="p">()</span><span class="o">.</span><span class="n">load</span><span class="p">({</span><span class="s1">&#39;title&#39;</span><span class="p">:</span><span class="bp">None</span><span class="p">,</span> <span class="s1">&#39;published&#39;</span><span class="p">:</span><span class="s1">&#39;abc&#39;</span><span class="p">},</span> <span class="n">ctx</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+    <span class="o">...</span>
+<span class="gr">ValueError</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">errors</span><span class="p">)</span>
+<span class="go">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">sorted</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">location</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">value</span><span class="p">),</span> <span class="n">ctx</span><span class="o">.</span><span class="n">errors</span><span class="p">))</span>
+<span class="go">[(&#39;/published&#39;, &#39;abc&#39;), (&#39;/title&#39;, None)]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="builtin-properties">
+<h2>Builtin Properties<a class="headerlink" href="#builtin-properties" title="제목 주소">¶</a></h2>
+<p>파이썬의 내장형들과 표준 라이브러리에 포함된 형들을 표현하기 위한 기본 Property 들을 제공한다.</p>
+<ul>
+<li><dl class="first docutils">
+<dt><a class="reference internal" href="api.html#flowdas.meta.Primitive" title="flowdas.meta.Primitive"><code class="xref py py-class docutils literal"><span class="pre">Primitive</span></code></a></dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><a class="reference internal" href="api.html#flowdas.meta.String" title="flowdas.meta.String"><code class="xref py py-class docutils literal"><span class="pre">String</span></code></a> - 문자열</dt>
+<dd><ul class="first last simple">
+<li><a class="reference internal" href="api.html#flowdas.meta.Unicode" title="flowdas.meta.Unicode"><code class="xref py py-class docutils literal"><span class="pre">Unicode</span></code></a> - 텍스트 문자열</li>
+<li><a class="reference internal" href="api.html#flowdas.meta.Bytes" title="flowdas.meta.Bytes"><code class="xref py py-class docutils literal"><span class="pre">Bytes</span></code></a> - 바이너리 문자열</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p class="first"><a class="reference internal" href="api.html#flowdas.meta.Boolean" title="flowdas.meta.Boolean"><code class="xref py py-class docutils literal"><span class="pre">Boolean</span></code></a> - <a class="reference external" href="http://docs.python.org/3/library/functions.html#bool" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">bool</span></code></a></p>
+</li>
+<li><dl class="first docutils">
+<dt><a class="reference internal" href="api.html#flowdas.meta.Number" title="flowdas.meta.Number"><code class="xref py py-class docutils literal"><span class="pre">Number</span></code></a> - 숫자</dt>
+<dd><ul class="first last simple">
+<li><a class="reference internal" href="api.html#flowdas.meta.Integer" title="flowdas.meta.Integer"><code class="xref py py-class docutils literal"><span class="pre">Integer</span></code></a> - 정수</li>
+<li><a class="reference internal" href="api.html#flowdas.meta.Float" title="flowdas.meta.Float"><code class="xref py py-class docutils literal"><span class="pre">Float</span></code></a> - <a class="reference external" href="http://docs.python.org/3/library/functions.html#float" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">float</span></code></a></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p class="first"><a class="reference internal" href="api.html#flowdas.meta.JsonObject" title="flowdas.meta.JsonObject"><code class="xref py py-class docutils literal"><span class="pre">JsonObject</span></code></a> - JSON object</p>
+</li>
+<li><p class="first"><a class="reference internal" href="api.html#flowdas.meta.JsonArray" title="flowdas.meta.JsonArray"><code class="xref py py-class docutils literal"><span class="pre">JsonArray</span></code></a> - JSON array</p>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p class="first"><a class="reference internal" href="api.html#flowdas.meta.Decimal" title="flowdas.meta.Decimal"><code class="xref py py-class docutils literal"><span class="pre">Decimal</span></code></a> - <a class="reference external" href="http://docs.python.org/3/library/decimal.html#decimal.Decimal" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">decimal.Decimal</span></code></a></p>
+</li>
+<li><p class="first"><a class="reference internal" href="api.html#flowdas.meta.Complex" title="flowdas.meta.Complex"><code class="xref py py-class docutils literal"><span class="pre">Complex</span></code></a> - <a class="reference external" href="http://docs.python.org/3/library/functions.html#complex" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">complex</span></code></a></p>
+</li>
+<li><p class="first"><a class="reference internal" href="api.html#flowdas.meta.DateTime" title="flowdas.meta.DateTime"><code class="xref py py-class docutils literal"><span class="pre">DateTime</span></code></a> - <a class="reference external" href="http://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">datetime.datetime</span></code></a></p>
+</li>
+<li><p class="first"><a class="reference internal" href="api.html#flowdas.meta.Date" title="flowdas.meta.Date"><code class="xref py py-class docutils literal"><span class="pre">Date</span></code></a> - <a class="reference external" href="http://docs.python.org/3/library/datetime.html#datetime.date" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">datetime.date</span></code></a></p>
+</li>
+<li><p class="first"><a class="reference internal" href="api.html#flowdas.meta.Time" title="flowdas.meta.Time"><code class="xref py py-class docutils literal"><span class="pre">Time</span></code></a> - <a class="reference external" href="http://docs.python.org/3/library/datetime.html#datetime.time" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">datetime.time</span></code></a></p>
+</li>
+<li><p class="first"><a class="reference internal" href="api.html#flowdas.meta.Duration" title="flowdas.meta.Duration"><code class="xref py py-class docutils literal"><span class="pre">Duration</span></code></a> - <a class="reference external" href="http://docs.python.org/3/library/datetime.html#datetime.timedelta" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">datetime.timedelta</span></code></a></p>
+</li>
+<li><dl class="first docutils">
+<dt><a class="reference internal" href="api.html#flowdas.meta.IpAddress" title="flowdas.meta.IpAddress"><code class="xref py py-class docutils literal"><span class="pre">IpAddress</span></code></a> - IP 주소</dt>
+<dd><ul class="first last simple">
+<li><a class="reference internal" href="api.html#flowdas.meta.Ipv4Address" title="flowdas.meta.Ipv4Address"><code class="xref py py-class docutils literal"><span class="pre">Ipv4Address</span></code></a> - <a class="reference external" href="http://docs.python.org/3/library/ipaddress.html#ipaddress.IPv4Address" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">ipaddress.IPv4Address</span></code></a></li>
+<li><a class="reference internal" href="api.html#flowdas.meta.Ipv6Address" title="flowdas.meta.Ipv6Address"><code class="xref py py-class docutils literal"><span class="pre">Ipv6Address</span></code></a> - <a class="reference external" href="http://docs.python.org/3/library/ipaddress.html#ipaddress.IPv6Address" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">ipaddress.IPv6Address</span></code></a></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p class="first"><a class="reference internal" href="api.html#flowdas.meta.Uuid" title="flowdas.meta.Uuid"><code class="xref py py-class docutils literal"><span class="pre">Uuid</span></code></a> - <a class="reference external" href="http://docs.python.org/3/library/uuid.html#uuid.UUID" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">uuid.UUID</span></code></a></p>
+</li>
+</ul>
+<p>표시한 계층 구조는 의미가 있다.
+가령 <a class="reference internal" href="api.html#flowdas.meta.String" title="flowdas.meta.String"><code class="xref py py-class docutils literal"><span class="pre">String</span></code></a> 은 <a class="reference internal" href="api.html#flowdas.meta.Unicode" title="flowdas.meta.Unicode"><code class="xref py py-class docutils literal"><span class="pre">Unicode</span></code></a> 나 <a class="reference internal" href="api.html#flowdas.meta.Bytes" title="flowdas.meta.Bytes"><code class="xref py py-class docutils literal"><span class="pre">Bytes</span></code></a> 중 어떤 값이건 표현할 수 있다는 뜻이고,
+<a class="reference internal" href="api.html#flowdas.meta.Primitive" title="flowdas.meta.Primitive"><code class="xref py py-class docutils literal"><span class="pre">Primitive</span></code></a> 는 그 아래에 위치한 어떤 종류의 값이건 받아들인다는 의미다.</p>
+<p>Property 의 계층 구조는 대응하는 파이썬 형의 계층 구조를 반영하지만 정확히 따르지는 않는다.
+가령 파이썬에서 <a class="reference external" href="http://docs.python.org/3/library/functions.html#bool" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">bool</span></code></a> 은 <a class="reference external" href="http://docs.python.org/3/library/functions.html#int" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">int</span></code></a> 로 취급되지만 Property 는 다른 종류의 형으로 취급한다.
+이는 직렬화가 전제되고 있고, 파이썬의 관례가 그 외부에서도 늘 받아들여지는 것은 아니기 때문이다.</p>
+<p>각 Property 들의 동작에 대한 상세한 설명는 클래스별 문서에서 제공된다.</p>
+</div>
+<div class="section" id="options">
+<h2>Options<a class="headerlink" href="#options" title="제목 주소">¶</a></h2>
+<p>Property 의 생성자는 키워드 옵션을 받아들인다. 앞서 예로 든 <code class="docutils literal"><span class="pre">required</span></code> 와 같이 모든 Property 에 적용되는 기본 옵션들이 있고,
+각 Property 들이 따로 지원하는 확장 옵션들이 있다. 기본 옵션들에 대한 설명은 <a class="reference internal" href="api.html#flowdas.meta.Property" title="flowdas.meta.Property"><code class="xref py py-class docutils literal"><span class="pre">Property</span></code></a> 문서에서 제공된다.</p>
+<p>여기에서는 간단히 예시한다.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Book</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">Entity</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">title</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">allow_empty</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">published</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">Date</span><span class="p">(</span><span class="n">format</span><span class="o">=</span><span class="s1">&#39;iso&#39;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">created</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">DateTime</span><span class="p">(</span><span class="n">format</span><span class="o">=</span><span class="s1">&#39;unix&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">meta</span><span class="o">.</span><span class="n">DateTime</span><span class="o">.</span><span class="n">now</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">isbn13</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="n">validate</span><span class="o">=</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="o">==</span><span class="mi">13</span> <span class="ow">and</span> <span class="n">s</span><span class="o">.</span><span class="n">isdigit</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">book</span> <span class="o">=</span> <span class="n">Book</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">book</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="gt">Traceback (most recent call last):</span>
+    <span class="o">...</span>
+<span class="gr">ValueError</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">book</span><span class="o">.</span><span class="n">created</span> 
+<span class="go">datetime.datetime(...)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">book</span><span class="o">.</span><span class="n">isbn13</span> <span class="o">=</span> <span class="s1">&#39;123456789012X&#39;</span>
+<span class="gt">Traceback (most recent call last):</span>
+    <span class="o">...</span>
+<span class="gr">ValueError</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">목차</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Quickstart</a><ul>
+<li><a class="reference internal" href="#entity-property">Entity &amp; Property</a></li>
+<li><a class="reference internal" href="#dumping">Dumping</a></li>
+<li><a class="reference internal" href="#loading">Loading</a></li>
+<li><a class="reference internal" href="#validation">Validation</a></li>
+<li><a class="reference internal" href="#error">Error</a></li>
+<li><a class="reference internal" href="#builtin-properties">Builtin Properties</a></li>
+<li><a class="reference internal" href="#options">Options</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="이전 장">Meta: A platform-agnostic library for schema modeling</a></li>
+      <li>Next: <a href="tuple.html" title="다음 장">Tuple</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>현재 문서</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/quickstart.txt"
+            rel="nofollow">소스 코드를 보려면</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>빠른 검색</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="바로 가기" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    모듈, 클래스 또는 함수 이름을 입력하십시오.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;Flowdas Inc.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+      |
+      <a href="_sources/quickstart.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

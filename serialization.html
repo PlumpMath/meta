@@ -1,0 +1,234 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Serialization &mdash; Meta 1.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/translations.js"></script>
+    <link rel="top" title="Meta 1.0.0 documentation" href="index.html" />
+    <link rel="next" title="flowdas.meta package" href="api.html" />
+    <link rel="prev" title="Inheritance" href="inheritance.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="serialization">
+<h1>Serialization<a class="headerlink" href="#serialization" title="제목 주소">¶</a></h1>
+<p>직렬화에 관련된 개념과 기능들을 살펴본다.</p>
+<div class="section" id="json-serializable">
+<h2>JSON Serializable<a class="headerlink" href="#json-serializable" title="제목 주소">¶</a></h2>
+<p>직렬화는 Meta 의 외부와 데이터를 주고받기 위한 기능이다. 그 외부는 파일, 데이터베이스, 네트웍 패킷등 아주 다양해질 수 있다.
+이 모든 가능성들에 직접적인 지원을 하려면 어떤 형태로건 플랫폼 종속적이 될 위험이 있다. 때문에 Meta 는 직렬화의 중간 지대를 설정한다.
+이 중간 지대는 직접적으로 사용될 수 있을 정도로 유용하고, 그 외의 다른 형태로 변환 가능할 만큼 표현력이 있어야 한다.
+Meta 가 선택한 것은 JSON Serializable 이다.</p>
+<p>JSON Serializable 은 다음과 같은 형들로만 구성된다.</p>
+<ul class="simple">
+<li><a class="reference external" href="http://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">str</span></code></a>, <a class="reference external" href="http://docs.python.org/3/library/functions.html#bytes" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">bytes</span></code></a> (Python 2 의 경우는 unicode 포함)</li>
+<li>모든 정수형과 <a class="reference external" href="http://docs.python.org/3/library/functions.html#bool" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">bool</span></code></a></li>
+<li><a class="reference external" href="http://docs.python.org/3/library/functions.html#float" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">float</span></code></a></li>
+<li>문자열 키를 사용하는 <a class="reference external" href="http://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">dict</span></code></a> 와 <a class="reference external" href="http://docs.python.org/3/library/collections.html#collections.OrderedDict" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">collections.OrderedDict</span></code></a></li>
+<li><a class="reference external" href="http://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">tuple</span></code></a> 과 <a class="reference external" href="http://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">list</span></code></a></li>
+</ul>
+<p><a class="reference internal" href="api.html#flowdas.meta.Entity.dump" title="flowdas.meta.Entity.dump"><code class="xref py py-meth docutils literal"><span class="pre">Entity.dump()</span></code></a> 는 항상 JSON Seriazable 을 출력하고, <a class="reference internal" href="api.html#flowdas.meta.Entity.load" title="flowdas.meta.Entity.load"><code class="xref py py-meth docutils literal"><span class="pre">Entity.load()</span></code></a> 는 JSON Seriazable 을 입력으로 받는다.</p>
+<p>JSON Serializable 은 표준라이브러리의 <a class="reference external" href="http://docs.python.org/3/library/json.html#module-json" title="(in Python v3.5)"><code class="xref py py-mod docutils literal"><span class="pre">json</span></code></a> 모듈이 다룰 수 있는 형과 일치한다.</p>
+</div>
+<div class="section" id="attribute-name">
+<h2>Attribute Name<a class="headerlink" href="#attribute-name" title="제목 주소">¶</a></h2>
+<p>Entity 를 정의할 때 속성의 이름은 직렬화에 필요한 이름을 사용하는 것이 관례다. 하지만 그 이름이 파이썬의 키워드인 경우 문법적인 문제가 발생한다.
+이와 같이 이름을 그대로 사용할 수 없는 경우 Property 의 <code class="docutils literal"><span class="pre">name</span></code> 옵션을 사용할 수 있다.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Student</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">Entity</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">klass</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;class&#39;</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">Student</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">klass</span> <span class="o">=</span> <span class="s1">&#39;A1&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span>
+<span class="go">Student(dict(klass=&#39;A1&#39;))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span>
+<span class="go">{&#39;class&#39;: &#39;A1&#39;}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="ordering">
+<h2>Ordering<a class="headerlink" href="#ordering" title="제목 주소">¶</a></h2>
+<p>보통 직렬화에 포함되는 <a class="reference external" href="http://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">dict</span></code></a> 는 순서가 없다.
+하지만 직렬화의 결과를 사람에게 제시하는 경우, 속성들의 순서에 일관성이 있으면 사용자 경험을 개선할 수 있는 경우도 존재한다.
+<code class="xref py py-meth docutils literal"><span class="pre">json.dumps()</span></code> 등에는 <code class="docutils literal"><span class="pre">sort_keys</span></code> 와 같은 옵션이 제공되지만, 항상 이름 순으로 정렬하게 된다.
+이름 순이 아니라 속성들이 정해진 순서대로 직렬화되기를 원할 경우 <code class="docutils literal"><span class="pre">ordered</span></code> 옵션을 사용할 수 있다.</p>
+<p>Property 에 <code class="docutils literal"><span class="pre">ordered</span></code> 옵션이 사용되면 Entity 정의에 등장하는 순서를 유지하고,
+<a class="reference internal" href="api.html#flowdas.meta.Entity.dump" title="flowdas.meta.Entity.dump"><code class="xref py py-meth docutils literal"><span class="pre">Entity.dump()</span></code></a> 는 <a class="reference external" href="http://docs.python.org/3/library/collections.html#collections.OrderedDict" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">collections.OrderedDict</span></code></a> 를 출력한다.
+이 순서는 <code class="docutils literal"><span class="pre">ordered</span></code> 옵션이 사용된 Property 들 간에만 유지되며, 그렇지 않은 Property 등 간의 순서는 유지하지 않고 항상 <code class="docutils literal"><span class="pre">ordered</span></code> Property
+뒤에 온다.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Resource</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">Entity</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="nb">type</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="n">ordered</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="nb">id</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="n">ordered</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Book</span><span class="p">(</span><span class="n">Resource</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">title</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">String</span><span class="p">()</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">book</span> <span class="o">=</span> <span class="n">Book</span><span class="p">({</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;book&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;1234&#39;</span><span class="p">,</span> <span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;Meta&#39;</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">book</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span>
+<span class="go">OrderedDict([(&#39;type&#39;, &#39;book&#39;), (&#39;id&#39;, &#39;1234&#39;), (&#39;title&#39;, &#39;Meta&#39;)])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">json</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">book</span><span class="o">.</span><span class="n">dump</span><span class="p">())</span>
+<span class="go">&#39;{&quot;type&quot;: &quot;book&quot;, &quot;id&quot;: &quot;1234&quot;, &quot;title&quot;: &quot;Meta&quot;}&#39;</span>
+</pre></div>
+</div>
+<p>이 순서는 표준라이브러리의 <a class="reference external" href="http://docs.python.org/3/library/json.html#json.dumps" title="(in Python v3.5)"><code class="xref py py-func docutils literal"><span class="pre">json.dumps()</span></code></a> 를 사용하는 경우 유지된다.
+하지만 <a class="reference external" href="http://docs.python.org/3/library/collections.html#collections.OrderedDict" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">collections.OrderedDict</span></code></a> 를 고려하지 않는 라이브러리를 사용하는 경우, 이 순서는 무시될 수 있다.</p>
+</div>
+<div class="section" id="view">
+<h2>View<a class="headerlink" href="#view" title="제목 주소">¶</a></h2>
+<p>지금까지 <a class="reference internal" href="api.html#flowdas.meta.Context" title="flowdas.meta.Context"><code class="xref py py-class docutils literal"><span class="pre">Context</span></code></a> 는 에러 정보를 얻는 용도로만 사용해왔다. 하지만 <a class="reference internal" href="api.html#flowdas.meta.Context" title="flowdas.meta.Context"><code class="xref py py-class docutils literal"><span class="pre">Context</span></code></a> 는 직렬화에 직접적으로 관여한다.</p>
+<p>예를 들어 RESTful API 의 직렬화에 사용될 경우, 사용자의 권한에 따라 노출되는 정보가 다르다고 가정해보자.
+<a class="reference internal" href="api.html#flowdas.meta.Entity" title="flowdas.meta.Entity"><code class="xref py py-class docutils literal"><span class="pre">Entity</span></code></a> 의 <code class="docutils literal"><span class="pre">only</span></code> 옵션이 일부 속성을 숨길 수 있는 기능을 제공하지만, 보통 구조적인 특성을 표현할 때 사용한다.
+직렬화의 문맥에 따라 속성의 노출 여부를 제어할 때는 <code class="docutils literal"><span class="pre">view</span></code> 옵션을 사용한다.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">Entity</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">nick</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">String</span><span class="p">()</span>
+<span class="gp">... </span>    <span class="n">email</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="n">view</span><span class="o">=</span><span class="s1">&#39;staff&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">nick</span></code> 은 누구나 볼 수 있는 속성인 반면, <code class="docutils literal"><span class="pre">email</span></code> 는 관리자만 볼 수 있는 속성이다.</p>
+<p><a class="reference internal" href="api.html#flowdas.meta.Context" title="flowdas.meta.Context"><code class="xref py py-class docutils literal"><span class="pre">Context</span></code></a> 가 개입하지 않으면 모든 속성이 노출된다.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">user</span><span class="o">.</span><span class="n">nick</span> <span class="o">=</span> <span class="s1">&#39;Meta&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">user</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="s1">&#39;honeypot@flowdas.com&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pprint</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">dump</span><span class="p">())</span>
+<span class="go">{&#39;email&#39;: &#39;honeypot@flowdas.com&#39;, &#39;nick&#39;: &#39;Meta&#39;}</span>
+</pre></div>
+</div>
+<p><a class="reference internal" href="api.html#flowdas.meta.Context" title="flowdas.meta.Context"><code class="xref py py-class docutils literal"><span class="pre">Context</span></code></a> 가 제공되더라도 <code class="docutils literal"><span class="pre">view</span></code> 가 설정되지 않으면 마찬가지다.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pprint</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">Context</span><span class="p">()))</span>
+<span class="go">{&#39;email&#39;: &#39;honeypot@flowdas.com&#39;, &#39;nick&#39;: &#39;Meta&#39;}</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">view</span></code> 가 제공되면 <a class="reference internal" href="api.html#flowdas.meta.Context" title="flowdas.meta.Context"><code class="xref py py-class docutils literal"><span class="pre">Context</span></code></a> 의 <code class="docutils literal"><span class="pre">view</span></code> 와 일치하거나 <code class="docutils literal"><span class="pre">view</span></code> 가 없는 속성들만 노출된다.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">user</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">Context</span><span class="p">(</span><span class="n">view</span><span class="o">=</span><span class="s1">&#39;user&#39;</span><span class="p">))</span>
+<span class="go">{&#39;nick&#39;: &#39;Meta&#39;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pprint</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">Context</span><span class="p">(</span><span class="n">view</span><span class="o">=</span><span class="s1">&#39;staff&#39;</span><span class="p">)))</span>
+<span class="go">{&#39;email&#39;: &#39;honeypot@flowdas.com&#39;, &#39;nick&#39;: &#39;Meta&#39;}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="codec">
+<h2>Codec<a class="headerlink" href="#codec" title="제목 주소">¶</a></h2>
+<p>특별한 형태의 자료 변환을 요구하는 자료형이 있을 경우는 Custom Property 를 만드는 것이 답이다.
+하지만 이 변환이 직렬화 과정에서만 필요하고, 인스턴스의 속성을 다루는 과정에서는 필요하지 않은 경우도 있다.
+네트웍으로 전달될 때 특정 속성을 암호화할 필요가 있거나, base64 인코딩을 사용해야할 경우 같은 것이다.</p>
+<p>또는 API 클라이언트로 전달할 때는 <code class="docutils literal"><span class="pre">id</span></code> 라는 이름을 사용하고, MongoDB 로 보낼 때는 <code class="docutils literal"><span class="pre">_id</span></code> 로 이름을 바꾸고 싶을 수 있다.</p>
+<p>또는 API 클라이언트의 요청에 따라 JSON 이나 MessagePack 중 하나를 선택하고 싶을 수 있다.</p>
+<p>이처럼 직렬화의 문맥에 맞춰 그 결과를 변환하고 싶을 경우, <code class="docutils literal"><span class="pre">codec</span></code> 옵션을 사용할 수 있다.
+Property 의 <code class="docutils literal"><span class="pre">codec</span></code> 옵션은 하나나 그 이상의 코덱 이름을 요구하는데, <a class="reference internal" href="api.html#flowdas.meta.Context" title="flowdas.meta.Context"><code class="xref py py-class docutils literal"><span class="pre">Context</span></code></a> 가 제공되지 않는 직렬화에서는 무시되지만,
+일단 <a class="reference internal" href="api.html#flowdas.meta.Context" title="flowdas.meta.Context"><code class="xref py py-class docutils literal"><span class="pre">Context</span></code></a> 가 제공되면 직렬화의 방향에 따라 정방향 혹은 역방향으로 데이터를 변환한다.
+이 때 <a class="reference internal" href="api.html#flowdas.meta.Context" title="flowdas.meta.Context"><code class="xref py py-class docutils literal"><span class="pre">Context</span></code></a> 를 여러개 만들어 각기 다른 코덱이 실행되도록 설정할 수 있다. 보통 <a class="reference internal" href="api.html#flowdas.meta.Codec" title="flowdas.meta.Codec"><code class="xref py py-class docutils literal"><span class="pre">Codec</span></code></a> 을 계승해서 필요한 코덱을 정의한다.</p>
+<p>간단한 예를 들면</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Book</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">Entity</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">title</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">String</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Book</span><span class="p">({</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;Meta&#39;</span><span class="p">},</span> <span class="n">codec</span><span class="o">=</span><span class="s1">&#39;json&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span>
+<span class="go">{&#39;title&#39;: &#39;Meta&#39;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Book</span><span class="p">({</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;Meta&#39;</span><span class="p">},</span> <span class="n">codec</span><span class="o">=</span><span class="s1">&#39;json&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">Context</span><span class="p">())</span>
+<span class="go">&#39;{&quot;title&quot;:&quot;Meta&quot;}&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">book</span> <span class="o">=</span> <span class="n">Book</span><span class="p">(</span><span class="n">codec</span><span class="o">=</span><span class="s1">&#39;json&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;{&quot;title&quot;:&quot;Meta&quot;}&#39;</span><span class="p">,</span> <span class="n">meta</span><span class="o">.</span><span class="n">Context</span><span class="p">())</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">json</span></code> 코덱은 JSON 문자열을 만드는 방법을 제공하는데, 더 간단한 방법도 있다.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">Book</span><span class="p">({</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;Meta&#39;</span><span class="p">}))</span>
+<span class="go">&#39;{&quot;title&quot;:&quot;Meta&quot;}&#39;</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">목차</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Serialization</a><ul>
+<li><a class="reference internal" href="#json-serializable">JSON Serializable</a></li>
+<li><a class="reference internal" href="#attribute-name">Attribute Name</a></li>
+<li><a class="reference internal" href="#ordering">Ordering</a></li>
+<li><a class="reference internal" href="#view">View</a></li>
+<li><a class="reference internal" href="#codec">Codec</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="inheritance.html" title="이전 장">Inheritance</a></li>
+      <li>Next: <a href="api.html" title="다음 장">flowdas.meta package</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>현재 문서</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/serialization.txt"
+            rel="nofollow">소스 코드를 보려면</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>빠른 검색</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="바로 가기" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    모듈, 클래스 또는 함수 이름을 입력하십시오.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;Flowdas Inc.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+      |
+      <a href="_sources/serialization.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

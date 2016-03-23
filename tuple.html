@@ -1,0 +1,230 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Tuple &mdash; Meta 1.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/translations.js"></script>
+    <link rel="top" title="Meta 1.0.0 documentation" href="index.html" />
+    <link rel="next" title="Nesting" href="nesting.html" />
+    <link rel="prev" title="Quickstart" href="quickstart.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="tuple">
+<h1>Tuple<a class="headerlink" href="#tuple" title="제목 주소">¶</a></h1>
+<p>배열을 표현하는 방법을 소개한다.</p>
+<div class="section" id="id1">
+<h2>Tuple<a class="headerlink" href="#id1" title="제목 주소">¶</a></h2>
+<p><a class="reference internal" href="api.html#flowdas.meta.JsonArray" title="flowdas.meta.JsonArray"><code class="xref py py-class docutils literal"><span class="pre">JsonArray</span></code></a> 가 배열을 표현하는 방법을 제공하기는 하지만, 배열을 이루는 항목들의 형을 제한하지는 못한다.</p>
+<p><a class="reference internal" href="api.html#flowdas.meta.Tuple" title="flowdas.meta.Tuple"><code class="xref py py-class docutils literal"><span class="pre">Tuple</span></code></a> Property 는 배열의 길이와 항목들의 형을 제한하는 방법을 제공한다.</p>
+<p><a class="reference internal" href="api.html#flowdas.meta.Tuple" title="flowdas.meta.Tuple"><code class="xref py py-class docutils literal"><span class="pre">Tuple</span></code></a> 은 생성자로 배열을 이루는 Property 의 목록을 받아들인다.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Point3D</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">Entity</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">xyz</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">Tuple</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">Float</span><span class="p">(),</span> <span class="n">meta</span><span class="o">.</span><span class="n">Float</span><span class="p">(),</span> <span class="n">meta</span><span class="o">.</span><span class="n">Float</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">Point3D</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">xyz</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">xyz</span>
+<span class="go">(1.0, 2.0, 3.0)</span>
+</pre></div>
+</div>
+<p><a class="reference external" href="http://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">tuple</span></code></a> 과 <a class="reference external" href="http://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">list</span></code></a> 모두 입력으로 받아들이지만 값은 항상 <a class="reference external" href="http://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">tuple</span></code></a> 로 표현되고,
+<a class="reference internal" href="api.html#flowdas.meta.Entity.dump" title="flowdas.meta.Entity.dump"><code class="xref py py-meth docutils literal"><span class="pre">Entity.dump()</span></code></a> 할 때는 <a class="reference external" href="http://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">list</span></code></a> 로 변환된다.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span>
+<span class="go">{&#39;xyz&#39;: [1.0, 2.0, 3.0]}</span>
+</pre></div>
+</div>
+<p>길이가 일치하지 않거나, 항목의 형이 다르면 받아들이지 않는다.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">xyz</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+<span class="gt">Traceback (most recent call last):</span>
+    <span class="o">...</span>
+<span class="gr">ValueError</span>: <span class="n">length mismatch</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">xyz</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;3&#39;</span><span class="p">]</span>
+<span class="gt">Traceback (most recent call last):</span>
+    <span class="o">...</span>
+<span class="gr">ValueError</span>
+</pre></div>
+</div>
+<p>하지만 None 이 포함될 수는 있다.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">xyz</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="bp">None</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">xyz</span>
+<span class="go">(1.0, 2.0, None)</span>
+</pre></div>
+</div>
+<p>None 을 허락하지 않으려면 항목을 이루는 Property 들에 <code class="docutils literal"><span class="pre">required</span></code> 옵션을 제공해야 한다.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Point3D</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">Entity</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">xyz</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">Tuple</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span> <span class="n">meta</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span> <span class="n">meta</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">Point3D</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">xyz</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="bp">None</span><span class="p">]</span>
+<span class="gt">Traceback (most recent call last):</span>
+    <span class="o">...</span>
+<span class="gr">ValueError</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="repeating">
+<h2>Repeating<a class="headerlink" href="#repeating" title="제목 주소">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">repeat</span></code> 옵션을 사용하면 앞의 예를 좀 더 간략히 표현할 수 있다.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Point3D</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">Entity</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">xyz</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">Tuple</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span> <span class="n">repeat</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">Point3D</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">xyz</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">xyz</span>
+<span class="go">(1.0, 2.0, 3.0)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">repeat</span></code> 가 주어지면 제공한 Property 목록 전체를 반복한다.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">X</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">Entity</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">pairs</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">Tuple</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">String</span><span class="p">(),</span> <span class="n">meta</span><span class="o">.</span><span class="n">Integer</span><span class="p">(),</span> <span class="n">repeat</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">X</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">pairs</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">pairs</span>
+<span class="go">(&#39;1&#39;, 1, &#39;2&#39;, 2)</span>
+</pre></div>
+</div>
+<p><a class="reference external" href="http://docs.python.org/3/library/functions.html#slice" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">slice</span></code></a> 로 범위를 지정할 수도 있다.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Polygon3D</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">Entity</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">points</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">Tuple</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span> <span class="n">repeat</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="bp">None</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">Polygon3D</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">points</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">points</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">points</span>
+<span class="go">(1.0, 2.0, 3.0, 4.0, 5.0, 6.0)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">points</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="gt">Traceback (most recent call last):</span>
+    <span class="o">...</span>
+<span class="gr">ValueError</span>: <span class="n">length mismatch</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">points</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+<span class="gt">Traceback (most recent call last):</span>
+    <span class="o">...</span>
+<span class="gr">ValueError</span>: <span class="n">length mismatch</span>
+</pre></div>
+</div>
+<p>최소 길이는 3 이고, 최대 길이는 제한이 없으나 항상 3의 배수가 되어야 한다는 뜻이다.</p>
+</div>
+<div class="section" id="tuplization">
+<h2>Tuplization<a class="headerlink" href="#tuplization" title="제목 주소">¶</a></h2>
+<p>앞의 예처럼 한가지 형으로만 구성된 균등 배열(homogeneous array)은 자주 사용된다.
+Property 클래스에 튜플화 연산자를 사용하면 좀 더 간략하게 표현할 수 있다.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Point3D</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">Entity</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">xyz</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">Float</span><span class="p">[</span><span class="mi">3</span><span class="p">](</span><span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">Point3D</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">xyz</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">xyz</span>
+<span class="go">(1.0, 2.0, 3.0)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Polygon3D</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">Entity</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">points</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">Float</span><span class="p">[</span><span class="mi">3</span><span class="p">::</span><span class="mi">3</span><span class="p">](</span><span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">Polygon3D</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">points</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">points</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">points</span>
+<span class="go">(1.0, 2.0, 3.0, 4.0, 5.0, 6.0)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="entity-array">
+<h2>Entity Array<a class="headerlink" href="#entity-array" title="제목 주소">¶</a></h2>
+<p>Entity 역시 튜플화가 된다.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Book</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">Entity</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">title</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">String</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">books</span> <span class="o">=</span> <span class="n">Book</span><span class="p">[:]()</span><span class="o">.</span><span class="n">load</span><span class="p">([{</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;meta&#39;</span><span class="p">},</span> <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;O&#39;</span><span class="p">}])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">books</span>
+<span class="go">(Book(dict(title=&#39;meta&#39;)), Book(dict(title=&#39;O&#39;)))</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">목차</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Tuple</a><ul>
+<li><a class="reference internal" href="#id1">Tuple</a></li>
+<li><a class="reference internal" href="#repeating">Repeating</a></li>
+<li><a class="reference internal" href="#tuplization">Tuplization</a></li>
+<li><a class="reference internal" href="#entity-array">Entity Array</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="quickstart.html" title="이전 장">Quickstart</a></li>
+      <li>Next: <a href="nesting.html" title="다음 장">Nesting</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>현재 문서</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/tuple.txt"
+            rel="nofollow">소스 코드를 보려면</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>빠른 검색</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="바로 가기" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    모듈, 클래스 또는 함수 이름을 입력하십시오.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;Flowdas Inc.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+      |
+      <a href="_sources/tuple.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
