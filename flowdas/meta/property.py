@@ -7,13 +7,27 @@
 import inspect
 import itertools
 import json
+import sys
 from collections import OrderedDict
 from contextlib import contextmanager
 
 from .compat import *
 from .type import Type
 
-Null = NotImplemented
+
+class _Null(object):
+    _instance = None
+
+    def __repr__(self):
+        return 'Null'
+
+    def __bool__(self):
+        return False
+
+    __nonzero__ = __bool__
+
+
+Null = _Null()
 
 
 class Error(object):
@@ -72,6 +86,7 @@ class Context(Type.Options):
     Since version 1.0.
     """
     _cs_codecs_ = {}
+    _cm_codecs_ = None
     _explicit_ = True
     view = None
     strict = False
@@ -90,14 +105,31 @@ class Context(Type.Options):
         return super(Context, self).__repr__(args=args)
 
     @classmethod
-    def set_codec(cls, name, codec):
+    def set_global_codec(cls, name, codec):
         cls._cs_codecs_[name] = codec
 
     @classmethod
-    def get_codec(cls, name):
+    def get_global_codec(cls, name):
         if name not in cls._cs_codecs_:
             raise LookupError('unknown codec: %s' % name)
         return cls._cs_codecs_[name]
+
+    def set_codec(self, name, codec):
+        """
+        Context-local :py:class:`Codec` 을 등록한다.
+
+        ``codec`` 으로 :py:class:`Codec` 의 인스턴스를 제공하면,
+        :py:class:`Context` 별로 다른 :py:class:`Codec` 이 사용되도록 할 수 있다.
+        """
+        if self._cm_codecs_ is None:
+            self._cm_codecs_ = {name: codec}
+        else:
+            self._cm_codecs_[name] = codec
+
+    def get_codec(self, name):
+        if self._cm_codecs_ is not None and name in self._cm_codecs_:
+            return self._cm_codecs_[name]
+        return self.get_global_codec(name)
 
     def reset(self):
         """
@@ -201,7 +233,7 @@ class Codec(object):
     @staticmethod
     def register(name):
         def deco(cls):
-            Context.set_codec(name, cls())
+            Context.set_global_codec(name, cls())
 
         return deco
 
@@ -254,7 +286,7 @@ def codec(name, *args, **kwargs):
 
     Since version 1.0.
     """
-    return Context.get_codec(name).__class__(*args, **kwargs)
+    return Context.get_global_codec(name).__class__(*args, **kwargs)
 
 
 @Codec.register('json')
@@ -282,11 +314,13 @@ class Marker(object):
     pending = None
     exc_info = None
 
-    def __init__(self, context, value):
+    def __init__(self, context, value, check=True):
+        self._check = check
         self.value = value
         if context is not None:
-            if id(value) in context._markers:
-                raise OverflowError()
+            if check:
+                if id(value) in context._markers:
+                    raise OverflowError()
             self.context = context
         else:
             self.context = Context()
@@ -296,11 +330,13 @@ class Marker(object):
         return self.context is not None and id(value) in self.context._markers
 
     def __enter__(self):
-        self.context._markers.add(id(self.value))
+        if self._check:
+            self.context._markers.add(id(self.value))
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        self.context._markers.remove(id(self.value))
+        if self._check:
+            self.context._markers.remove(id(self.value))
         if exc_type is None:
             if self.pending:
                 self.context._errtree = self.pending
@@ -516,13 +552,13 @@ class Property(Type):
     def __repr__(self, args=None, opts=None):
         if args is None:
             args = []
-        args.append('id=0x%x' % id(self))
+        xargs = []
         if self._pm_order_ is not None:
-            args.append('ordered=True')
-        args.extend('%s=%s' % (k, repr(v)) for k, v in self._pm_opts_.__dict__.items())
+            xargs.append('ordered=True')
+        xargs.extend('%s=%s' % (k, repr(v)) for k, v in self._pm_opts_.__dict__.items())
         if opts is not None:
-            args.extend(opts)
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(args))
+            xargs.extend(opts)
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(args + sorted(xargs)))
 
     #
     # ordered property
@@ -677,22 +713,23 @@ class Property(Type):
         return value
 
     def load(self, value, context=None):
-        if value is None:
-            if self._pm_opts_.required:
-                raise ValueError()
-            return None
-        if context is not None and context._explicit_ and self._pm_opts_.codec is not None:
-            for name_or_codec in reversed(self._pm_opts_.codec):
-                if isinstance(name_or_codec, Codec):
-                    codec = name_or_codec
-                else:
-                    codec = context.get_codec(name_or_codec)
-                value = codec.decode(value, self, context)
-        value = self._load_(value, context)
-        if self._pm_opts_.validate is not None:
-            if not self._pm_opts_.validate(value):
-                raise ValueError()
-        return value
+        with Marker(context, value, check=False) as marker:
+            if value is None:
+                if self._pm_opts_.required:
+                    raise ValueError()
+                return None
+            if context is not None and context._explicit_ and self._pm_opts_.codec is not None:
+                for name_or_codec in reversed(self._pm_opts_.codec):
+                    if isinstance(name_or_codec, Codec):
+                        codec = name_or_codec
+                    else:
+                        codec = marker.context.get_codec(name_or_codec)
+                    value = codec.decode(value, self, marker.context)
+            value = self._load_(value, marker.context)
+            if self._pm_opts_.validate is not None:
+                if not self._pm_opts_.validate(value):
+                    raise ValueError()
+            return value
 
     #
     # visibility control
@@ -718,13 +755,13 @@ class Property(Type):
 class Container(Property):
     _cm_args_ = []
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *properties, **kwargs):
         super(Container, self).__init__(**kwargs)
-        for i, arg in enumerate(args):
+        for i, arg in enumerate(properties):
             if not isinstance(arg, Property):
                 raise TypeError('%s expects properties, but given %s' % (self.__class__.__name__, repr(arg)))
             arg._bind_(i, self)
-        self._cm_args_ = list(args)
+        self._cm_args_ = list(properties)
 
     def __repr__(self, args=None, opts=None):
         if args is None:
@@ -761,8 +798,11 @@ class Proxy(Property):
         self.owner = None
 
     def _resolve(self):
-        module = sys.modules.get(self.factory.klass.__module__)
-        return getattr(module, self.factory.klass.__name__, None)
+        if self.factory.frame is None:
+            module = sys.modules.get(self.factory.klass.__module__)
+            return getattr(module, self.factory.klass.__name__, None)
+        else:
+            return self.factory.frame.f_locals.get(self.factory.klass.__name__)
 
     def resolve(self):
         klass = self._resolve()
@@ -794,8 +834,9 @@ class Proxy(Property):
 
 def declare(property):
     class Factory(object):
-        def __init__(self, klass):
+        def __init__(self, klass, frame=None):
             self.klass = klass
+            self.frame = frame
 
         def __call__(self, *args, **kwargs):
             return Proxy(self, args, kwargs)
@@ -803,19 +844,23 @@ def declare(property):
         def __getitem__(self, item):
             return Tuplizer(self, item)
 
-    return Factory(property)
+    try:
+        frame = sys._getframe(1)
+    except:
+        frame = None
+    return Factory(property, frame)
 
 
 class Tuple(Container):
     """
     정해진 형태를 갖는 :py:class:`tuple` 을 표현하는 :py:class:`Property`.
 
-    ``args`` 로 제공한 :py:class:`Property` 의 목록과 일치하는 형태의 :py:class:`tuple` 이나 :py:class:`list` 를 받아들이고,
+    ``properties`` 로 제공한 :py:class:`Property` 의 목록과 일치하는 형태의 :py:class:`tuple` 이나 :py:class:`list` 를 받아들이고,
     :py:class:`tuple` 로 변환한다.
 
-    ``args`` 올 수 있는 :py:class:`Property` 에 제약은 없다. 때문에 임의의 깊이로 중첩할 수 있다.
+    ``properties`` 올 수 있는 :py:class:`Property` 에 제약은 없다. 때문에 임의의 깊이로 중첩할 수 있다.
 
-    :py:class:`tuple` 이 None 을 포함할 수 있느냐는 ``args`` 로 제공된 :py:class:`Property` 들의 ``required`` 옵션이 결정한다.
+    :py:class:`tuple` 이 None 을 포함할 수 있느냐는 ``properties`` 로 제공된 :py:class:`Property` 들의 ``required`` 옵션이 결정한다.
 
     :py:meth:`Entity.dump` 할 때 :py:class:`list` 를 출력한다.
 
@@ -828,7 +873,7 @@ class Tuple(Container):
         - :py:class:`slice`
         - :py:data:`Ellipsis`
 
-        모두 ``args`` 로 지정된 단위가 몇번 등장할 수 있는지를 지정한다. :py:data:`Ellipsis` 는 길이 제약이 없다는 뜻이고, 정수나 그 목록은
+        모두 ``properties`` 로 지정된 단위가 몇번 등장할 수 있는지를 지정한다. :py:data:`Ellipsis` 는 길이 제약이 없다는 뜻이고, 정수나 그 목록은
         지정한 횟수로 제한한다는 뜻이고, :py:class:`slice` 는 범위를 표현한다.
 
         기본 값은 1.
@@ -920,13 +965,14 @@ class Tuple(Container):
         return n
 
     def _load_(self, value, context):
-        if not isinstance(value, (tuple, list)):
-            raise ValueError()
-        n = self._check_length_(value, self._pm_opts_.repeat)
-        if n == 0:
-            return tuple(value)
-        decoded = []
         with Marker(context, value) as marker:
+            if not isinstance(value, (tuple, list)):
+                raise ValueError()
+            n = self._check_length_(value, self._pm_opts_.repeat)
+            if n == 0:
+                return tuple(value)
+            decoded = []
+
             spec = self.get_components()
             unit = len(spec)
             visible = [p._isvisible_(marker.context) for p in spec]
@@ -953,6 +999,7 @@ __all__ = [
     'Null',
     'Context',
     'Codec',
+    'Marker',
     'Property',
     'Tuple',
     'codec',

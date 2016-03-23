@@ -16,9 +16,13 @@ Install
 
 ::
 
-    pip install flowdas-meta==1.0.0a1
+    pip install flowdas-meta
 
 파이썬 2.7 과 3.3+ 를 지원합니다. PyPy 역시 지원됩니다. 같이 설치되는 패키지는 없습니다.
+
+아직 PyPI 에 배포되지 않은 개발 버전을 설치하는 방법은 이렇습니다.::
+
+    pip install git+https://github.com/flowdas/meta.git@develop#egg=flowdas-meta
 
 Why?
 ====
@@ -38,7 +42,7 @@ Meta 가 갖고 있는 특징이자 한계입니다.
 
     클래스 다형성
         클래스 계층 구조를 만들고, 계층 구조를 고려한 검사를 수행하며, 역시 계층 구조가 반영된 가역적인 직렬화를 제공합니다.
-    Union
+    Union & Selector
         여러 종류의 형을 조합하여 그 중의 하나를 표시할 수 있는 방법을 제공합니다.
 일반화된 배열
     배열 지원을 강화합니다. 위의 예에서 나오는 ``Author[1:]()`` 표현은 길이 1 이상인 ``Author`` 의 배열을 뜻합니다.
@@ -55,13 +59,18 @@ Guide
 .. toctree::
    :maxdepth: 2
 
-TODO
+   quickstart
+   tuple
+   nesting
+   union
+   inheritance
+   serialization
 
 API Reference
 =============
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
    api
 

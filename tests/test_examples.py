@@ -19,8 +19,6 @@ def get_names(pattern):
 
 @pytest.mark.parametrize('name', get_names('*.py'))
 def test_py(name):
-    if name == 'declare':
-        return
     with open(os.path.join(EX, name + '.py')) as f:
         code = compile(f.read(), name + '.py', 'exec')
         exec (code, globals(), locals())
@@ -34,4 +32,19 @@ def test_rst(name):
         return
     if name == 'codec' and PY2:
         return
+    assert failure_count == 0
+
+GUIDE = os.path.join(os.path.dirname(__file__), '../docs')
+
+@pytest.mark.parametrize('name', [
+    'quickstart',
+    'tuple',
+    'nesting',
+    'union',
+    'inheritance',
+    'serialization',
+])
+def test_guide(name):
+    failure_count, test_count = doctest.testfile(os.path.join(GUIDE, name + '.rst'),
+                                                 globs={'meta': meta, 'pprint': pprint}, module_relative=False)
     assert failure_count == 0

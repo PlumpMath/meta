@@ -61,6 +61,33 @@ def test_options(options):
         assert x.undefined == False
 
 
+def test_name():
+    class X(meta.Entity):
+        a = meta.Integer(name='A')
+
+    x = X()
+    x.a = 1
+    assert x.dump() == {'A': 1}
+
+    with pytest.raises(AttributeError):
+        class Y(meta.Entity):
+            a = meta.Integer(name='A')
+            b = meta.Integer(name='A')
+
+    with pytest.raises(AttributeError):
+        class Y(meta.Entity):
+            a = meta.Integer(name='A')
+            A = meta.Integer()
+
+    with pytest.raises(AttributeError):
+        class Y(X):
+            b = meta.Integer(name='A')
+
+    with pytest.raises(AttributeError):
+        class Y(X):
+            A = meta.Integer()
+
+
 def test_nesting():
     class MyStruct(meta.Entity):
         member = P(required=True)
@@ -122,7 +149,27 @@ def test_isolation():
 
 
 def test_declare():
-    from .circular import X, Parent, Child, Y, Z
+    @meta.declare
+    class X: pass
+
+    class X(meta.Entity):
+        x = X(required=True)
+
+    @meta.declare
+    class Child: pass
+
+    class Parent(meta.Entity):
+        children = Child[:](required=True)
+
+    class Child(meta.Entity):
+        parent = Parent(required=True)
+
+    @meta.declare
+    class Y: pass
+
+    class Z(meta.Entity):
+        y = Y(required=True)
+
     x1 = X()
     x2 = X()
     x1.x = x2
@@ -148,6 +195,15 @@ def test_declare():
     with pytest.raises(OverflowError):
         p.dump()
 
+    @meta.declare
+    class X: pass
+
+    class X(meta.Entity):
+        x = X(required=True)
+
+    x = X()
+
+    assert X.x.dump(x) == {}
 
 def test_dump_with_hole():
     class X(meta.Entity):
@@ -164,7 +220,7 @@ def test_dump_with_hole():
 
 def test_polymorphism():
     class B(meta.Entity):
-        type = meta.Kind('B')
+        type = meta.Kind('B', ordered=True, name='TYPE')
 
     class D(B):
         type = 'D'
@@ -173,10 +229,29 @@ def test_polymorphism():
     class Y(meta.Entity):
         b = B()
 
-    y = Y().load({'b': {'type': 'D', 'i': 1234}})
+    y = Y().load({'b': {'TYPE': 'D', 'i': 1234}})
 
     assert isinstance(y.b, D)
     assert y.b.i == 1234
+
+    # error cases
+
+    with pytest.raises(TypeError):
+        class E(B):
+            type = 'D'
+
+    with pytest.raises(TypeError):
+        class E(B):
+            kind = meta.Kind()
+
+    with pytest.raises(TypeError):
+        meta.Kind({})
+
+    with pytest.raises(TypeError):
+        meta.Kind(required=False)
+
+    with pytest.raises(TypeError):
+        meta.Kind(view='public')
 
 
 def test_inheritance():
@@ -345,6 +420,16 @@ def test_ordered():
     assert isinstance(x.dump(), OrderedDict)
     assert list(x.keys())[:3] == ['b', 'x', 'c']
 
+    class Y(X):
+        p = P(ordered=False)
+        q = P(ordered=True)
+
+    y = Y()
+    y.update(a=1, b=2, c=3, x=4, y=5, p=6, q=7)
+
+    assert isinstance(y.dump(), OrderedDict)
+    assert list(y.keys())[:4] == ['b', 'x', 'c', 'q']
+
 
 def test_default():
     class X(meta.Entity):
@@ -379,7 +464,11 @@ def test_default():
 
 
 def test_error():
-    from .circular import X, Parent
+    @meta.declare
+    class X: pass
+
+    class X(meta.Entity):
+        x = X(required=True)
 
     d = dict(x=dict(x=1))
     context = meta.Context()
@@ -390,6 +479,15 @@ def test_error():
     assert context.errors[0].value == 1
     assert context.errors[0].location == '/x/x'
     assert context.errors[0].exc_info[0] == ValueError
+
+    @meta.declare
+    class Child: pass
+
+    class Parent(meta.Entity):
+        children = Child[:](required=True)
+
+    class Child(meta.Entity):
+        parent = Parent(required=True)
 
     d = dict(
         children=[
@@ -427,9 +525,25 @@ def test_error():
     assert context.errors[0].location == '/children/1/parent/children/0/father'
     assert context.errors[0].exc_info[0] == ValueError
 
+    context.reset()
+    with pytest.raises(ValueError):
+        Parent().load([], context)
+    print(context._errtree)
+    assert context.errors is not None
+    assert context.errors[0].value == []
+    assert context.errors[0].location == ''
+    assert context.errors[0].exc_info[0] == ValueError
+
 
 def test_multi_errors():
-    from .circular import Parent
+    @meta.declare
+    class Child: pass
+
+    class Parent(meta.Entity):
+        children = Child[:](required=True)
+
+    class Child(meta.Entity):
+        parent = Parent(required=True)
 
     d = dict(
         children=[
@@ -464,6 +578,21 @@ def test_multi_errors():
     assert context.errors[2].location == '/children/2/parent/children/0/father'
     assert context.errors[2].value is meta.Null
     assert context.errors[2].exc_info[0] == ValueError
+
+
+def test_toplevel_errors():
+    class X(meta.Entity):
+        a = meta.Integer[:]()
+
+    context = meta.Context(strict=True, max_errors=10)
+    with pytest.raises(ValueError):
+        X(required=True).load(None, context)
+
+    assert len(context.errors) == 1
+
+    assert context.errors[0].location == ''
+    assert context.errors[0].value == None
+    assert context.errors[0].exc_info[0] == ValueError
 
 
 def test_union():
@@ -505,12 +634,31 @@ def test_union():
     x.p.s = 123
     assert x.p.s == 123
     assert x.p.v is None
+    x.p.v = None
+    assert x.p.s == 123
     assert x.dump() == {'p': 123}
+    x.validate()
+
+    del x.p.v
+    assert x.p.s == 123
+    del x.p.s
+    assert x.p.s is None
+
+    with pytest.raises(ValueError):
+        x.validate()
 
     x.p.v = (123,)
     assert x.p.v == (123,)
     assert x.p.s is None
+    x.p.s = None
+    assert x.p.v == (123,)
     assert x.dump() == {'p': [123]}
+    x.validate()
+
+    del x.p.s
+    assert x.p.v == (123,)
+    del x.p.v
+    assert x.p.v is None
 
     x1 = X()
     x2 = X()
@@ -542,6 +690,9 @@ def test_union():
     assert x.p.s == (123,)
     assert x.dump() == {'p': (123,)}
 
+    x.validate()
+
+
 def test_union_with_error():
     class U(meta.Union):
         s = meta.Integer(ordered=True)
@@ -569,6 +720,14 @@ def test_constructor():
     assert meta.Entity({}) == {}
     assert meta.Entity([]) == {}
 
+    for arg in ({}, []):
+        with pytest.raises(TypeError):
+            meta.Entity(arg, arg)
+    with pytest.raises(TypeError):
+        meta.Entity({}, [])
+    with pytest.raises(TypeError):
+        meta.Entity([], {})
+
 
 def test_bool():
     class X(meta.Entity):
@@ -595,6 +754,16 @@ def test_keys():
     with pytest.raises(TypeError):
         d.keys(None)
 
+    class X(meta.Entity):
+        a = meta.Integer()
+        b = meta.Integer(ordered=True)
+
+    d = X()
+    assert set(d.keys()) == set()
+    d.update({'a': 1, 'b': 2})
+    k = d.keys()
+    assert list(k) == ['b', 'a']
+
 
 def test_values():
     class X(meta.Entity):
@@ -606,6 +775,14 @@ def test_values():
     assert set(d.values()) == {2}
     with pytest.raises(TypeError):
         d.values(None)
+
+    class X(meta.Entity):
+        a = meta.Integer(ordered=True)
+
+    d = X()
+    assert set(d.values()) == set()
+    d.update({'a': 2})
+    assert set(d.values()) == {2}
 
 
 def test_items():
@@ -619,6 +796,15 @@ def test_items():
     assert set(d.items()) == {('a', 2)}
     with pytest.raises(TypeError):
         d.items(None)
+
+    class X(meta.Entity):
+        a = meta.Integer(ordered=True)
+
+    d = X()
+    assert set(d.items()) == set()
+
+    d.update({'a': 2})
+    assert set(d.items()) == {('a', 2)}
 
 
 def test_contains():
@@ -822,6 +1008,7 @@ def test_get():
     d = X()
     assert d.get('c') is None
     assert d.get('c', 3) == 3
+    assert d.get('c', default=3) == 3
     d.update({'a': 1, 'b': 2})
     assert d.get('c') is None
     assert d.get('c', 3) == 3
@@ -831,6 +1018,10 @@ def test_get():
         d.get()
     with pytest.raises(TypeError):
         d.get(None, None, None)
+    with pytest.raises(TypeError):
+        d.get(default=1, excess=2)
+    with pytest.raises(TypeError):
+        d.get(excess=2)
 
 
 def test_setdefault():
@@ -996,8 +1187,8 @@ def test_validate():
     assert 'c' in x
     assert 'd' in x
 
-def test_is_visible():
 
+def test_is_visible():
     class X(meta.Entity):
         a = meta.Integer(required=True)
         b = meta.Integer()
@@ -1010,6 +1201,7 @@ def test_is_visible():
     assert x.is_visible('a', None)
     assert x.is_visible('b', None)
     assert x.is_visible('c', None)
+    assert not x.is_visible('d', None)
 
     assert x.is_visible('a', public)
     assert x.is_visible('b', public)
@@ -1019,28 +1211,28 @@ def test_is_visible():
     assert x.is_visible('b', private)
     assert x.is_visible('c', private)
 
-    x = X(only='b')
-    assert x.is_visible('a', None)
-    assert x.is_visible('b', None)
-    assert not x.is_visible('c', None)
+    for x in (X(only='b'), X(only=['b']), X(only={'b'})):
+        assert x.is_visible('a', None)
+        assert x.is_visible('b', None)
+        assert not x.is_visible('c', None)
 
-    assert x.is_visible('a', public)
-    assert x.is_visible('b', public)
-    assert not x.is_visible('c', public)
+        assert x.is_visible('a', public)
+        assert x.is_visible('b', public)
+        assert not x.is_visible('c', public)
 
-    assert x.is_visible('a', private)
-    assert x.is_visible('b', private)
-    assert not x.is_visible('c', private)
+        assert x.is_visible('a', private)
+        assert x.is_visible('b', private)
+        assert not x.is_visible('c', private)
 
-    x = X(only='c')
-    assert x.is_visible('a', None)
-    assert not x.is_visible('b', None)
-    assert x.is_visible('c', None)
+    for x in (X(only='c'), X(only=['c']), X(only={'c'})):
+        assert x.is_visible('a', None)
+        assert not x.is_visible('b', None)
+        assert x.is_visible('c', None)
 
-    assert x.is_visible('a', public)
-    assert not x.is_visible('b', public)
-    assert not x.is_visible('c', public)
+        assert x.is_visible('a', public)
+        assert not x.is_visible('b', public)
+        assert not x.is_visible('c', public)
 
-    assert x.is_visible('a', private)
-    assert not x.is_visible('b', private)
-    assert x.is_visible('c', private)
+        assert x.is_visible('a', private)
+        assert not x.is_visible('b', private)
+        assert x.is_visible('c', private)

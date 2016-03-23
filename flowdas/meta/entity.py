@@ -52,9 +52,9 @@ class Kind(Property):
         if kind is not None and not isinstance(kind, (basestring_types, integer_types, tuple)):
             raise TypeError("'%s' is not valid kind value" % repr(kind))
         if required is not True:
-            raise TypeError("context got an unexpected option 'required'")
+            raise TypeError("Kind got an unexpected option 'required'")
         if kwargs:
-            raise TypeError("context got an unexpected option '%s'" % kwargs.popitem()[0])
+            raise TypeError("Kind got an unexpected option '%s'" % kwargs.popitem()[0])
         kwargs = {}
         if ordered is True:
             kwargs['ordered'] = True
@@ -82,6 +82,57 @@ class Kind(Property):
         return instance
 
 
+class Selector(Property):
+    """
+    :py:class:`Entity` 의 옵션에 따라 형이 결정되는 :py:class:`Property`.
+
+    데코레이터 문법을 사용해서 ``properties`` 로 제공한 :py:class:`Property` 들 중 하나를 선택하는 메쏘드를 제공한다.
+
+    메쏘드는 ``[0, len(properties))`` 범위의 정수를 돌려주어야 한다.
+
+    이 메쏘드는 다른 :py:class:`Property` 들을 참조할 수는 없으나 :py:class:`Entity` 의 옵션을 참조할 수는 있다.
+
+    :py:class:`Property` 의 모든 옵션을 지원한다.
+
+    Example
+
+        .. literalinclude:: /../tests/ex/selector.rst
+
+    Since version 1.0.
+    """
+    _sm_args_ = []
+    _select = None
+
+    def __init__(self, *properties, **kwargs):
+        super(Selector, self).__init__(**kwargs)
+        for arg in properties:
+            if not isinstance(arg, Property):
+                raise TypeError('%s expects properties, but given %s' % (self.__class__.__name__, repr(arg)))
+        self._sm_args_ = list(properties)
+
+    def __call__(self, func):
+        self._select = func
+        return self
+
+    def _bind_(self, key, owner):
+        super(Selector, self)._bind_(key, owner)
+        for arg in self._sm_args_:
+            arg._bind_(key, owner)
+
+    def __set__(self, instance, value):
+        self.select(instance).__set__(instance, value)
+
+    def select(self, instance):
+        if self._select is None:
+            raise NotImplementedError()
+        index = self._select(instance)
+        if index is None:
+            raise TypeError()
+        if index < 0 or index >= len(self._sm_args_):
+            raise IndexError('Selector index out of range')
+        return self._sm_args_[index]
+
+
 class Composite(Property):
     _cs_fields_ = {}  # {key: property}
     _cs_kind_key_ = None
@@ -92,7 +143,11 @@ class Composite(Property):
 
     @classmethod
     def _repr_(cls):
-        return super(Composite, cls)._repr_(args=['%s=%s' % (k, repr(v)) for k, v in cls._cs_fields_.items()])
+        if isinstance(cls._cs_fields_, OrderedDict):
+            items = cls._cs_fields_.items()
+        else:
+            items = sorted(cls._cs_fields_.items())
+        return super(Composite, cls)._repr_(args=['%s=%s' % (k, repr(v)) for k, v in items])
 
     @staticmethod
     def _init_(cls, attrs, options):
@@ -210,7 +265,7 @@ class Composite(Property):
         모든 :py:class:`Property` 들의 검사가 완료되고, 문제가 없을 때만 호출된다.
         때문에 :py:class:`Property` 들 간의 상호 관계만 조사하면 된다.
 
-        하지만 ``view``, ``only``, ``exclude`` 옵션들을 사용할 경우는 꽤 복잡해질 수 있다. 다음과 같은 원칙이 도움이 될 수 있다.
+        하지만 ``view``, ``only`` 옵션들을 사용할 경우는 꽤 복잡해질 수 있다. 다음과 같은 원칙이 도움이 될 수 있다.
 
         1. ``required`` :py:class:`Property` 들은 그냥 검사한다.
         2. 그 외의 :py:class:`Property` 들은 :py:meth:`Entity.get_if_visible` 로 값을 얻어서 None 이 아닌 경우만 검사한다.
@@ -325,14 +380,11 @@ class Entity(Composite):
 
     :py:class:`Property` 의 모든 옵션을 지원하고, 다음과 같은 추가 옵션을 제공한다.
 
-    exclude
-        :py:class:`Property` 어트리뷰트의 이름이나 그 목록을 제공하면 serialization 과정에서 해당 :py:class:`Property` 들이 정의되지
-        않은 것처럼 취급한다.
     only
         :py:class:`Property` 어트리뷰트의 이름이나 그 목록을 제공하면 serialization 과정에서 지정한 것들 외의 모든 :py:class:`Property`
-        들이 정의되지 않은 것처럼 취급한다. ``exclude`` 에 포함된 이름이 있으면 역시 제거된다.
+        들이 정의되지 않은 것처럼 취급한다.
 
-        ``exclude`` 와 ``only`` 옵션의 기능응 ``view`` 옵션과 중첩되는 부분이 있다.
+        ``only`` 옵션의 기능응 ``view`` 옵션과 중첩되는 부분이 있다.
         하지만 ``view`` 와는 달리 두 옵션은 :py:class:`Context` 의 설정에 영향받지 않기 때문에,
         문맥과 무관한 :py:class:`Entity` 의 구조적 특성을 표현할 때 사용된다.
 
@@ -340,7 +392,7 @@ class Entity(Composite):
         이 인스턴스의 다른 :py:class:`Property` 들을 설정한 후 :py:meth:`Entity.dump` 해도 출력되지 않는다.
         이 동작이 문제가 될 경우 회피하는 간단한 방법은 이 인스턴스를 인자로 사용해서 다른 인스턴스를 하나 만드는 것이다.
 
-        ``only`` 와 ``exclude`` 는 ``required=True`` 인 :py:class:`Property` 를 제거할 수 없다.
+        ``only`` 는 ``required=True`` 인 :py:class:`Property` 를 제거할 수 없다.
 
             .. literalinclude:: /../tests/ex/entity_only.rst
 
@@ -384,22 +436,10 @@ class Entity(Composite):
 
     class Options(Property.Options):
         only = None
-        exclude = None
 
         def __init__(self, **kwargs):
             super(Entity.Options, self).__init__(**kwargs)
-            if (self.only is not None or self.exclude is not None) and not isinstance(self.only, frozenset):
-                if self.exclude is not None:
-                    if self.only is None:
-                        self.only = set(self._es_fields.keys())
-                    elif isinstance(self.only, (list, tuple)):
-                        self.only = set(self.only)
-                    else:
-                        self.only = {self.only}
-                    for x in (self.exclude if isinstance(self.exclude, (list, tuple)) else [self.exclude]):
-                        self.only.discard(x)
-                    del self.exclude
-
+            if self.only is not None and not isinstance(self.only, frozenset):
                 self._compile_set('only')
 
     def __init__(self, *args, **kwargs):
@@ -413,7 +453,7 @@ class Entity(Composite):
         data = ['%s=%s' % (k, 'Null' if v is Null else repr(v)) for k, v in self.items()]
         if data:
             if args is None:
-                args = ['dict(%s)' % ', '.join(data)]
+                args = ['dict(%s)' % ', '.join(sorted(data))]
         return super(Entity, self).__repr__(args=args, opts=opts)
 
     def _copy_(self, *args, **kwargs):
@@ -532,8 +572,7 @@ class Entity(Composite):
                         elif isinstance(property, Union):
                             # TODO: move abstraction to Composite
                             value.validate(marker.context)
-                if not node._validate_(marker.context):
-                    raise ValueError()
+                super(Entity, node).validate(marker.context)
 
         validate(self, context)
 
@@ -541,11 +580,9 @@ class Entity(Composite):
     # serialization
     #
 
-    def _dump_(self, value, context):
+    def _prepare_dump_(self, value, context):
         with Marker(context, value) as marker:
-            # preserve orderedness
-            encoded = type(value._cs_fields_)()
-
+            dumps = []
             for key in value._cs_fields_:
                 if self.is_visible(key, marker.context, value):
                     val = value._get_(key)
@@ -554,22 +591,22 @@ class Entity(Composite):
                             property = value._cs_fields_[key]
                             name = property._pm_opts_.get('name', key)
                             if val is Null:
-                                encoded[name] = None
-                            elif key == value._cs_kind_key_:
-                                encoded[name] = val
-                            else:
-                                encoded[name] = property.dump(val, marker.context)
-            return encoded
+                                val = None
+                            elif key != value._cs_kind_key_:
+                                if isinstance(property, Selector):
+                                    val = property.select(self).dump(val, marker.context)
+                                else:
+                                    val = property.dump(val, marker.context)
+                            dumps.append((key, property, name, val))
+            return dumps
 
-    def _load_(self, value, context):
-        if self._cs_kind_key_ is None:
-            if type(value) is self.__class__:
-                return value
-        else:
-            if isinstance(value, self.__class__) and getattr(value, self._cs_kind_key_) is not None:
-                return value
-        if not isinstance(value, dict):
-            raise ValueError()
+    def _dump_(self, value, context):
+        encoded = type(value._cs_fields_)()
+        for key, property, name, val in self._prepare_dump_(value, context):
+            encoded[name] = val
+        return encoded
+
+    def _prepare_load(self, value, context):
         if self._cs_kind_key_ is None:
             klass = self.__class__
         else:
@@ -578,20 +615,45 @@ class Entity(Composite):
             if klass is None or not issubclass(klass, self.__class__):
                 raise ValueError()
         instance = klass(**self._pm_opts_.__dict__)
+        fields = {}
+        for key in instance._cs_fields_:
+            if self.is_visible(key, context, instance):
+                property = instance._cs_fields_[key]
+                name = property._pm_opts_.get('name', key)
+                fields[name] = (key, property)
+        return instance, fields
+
+    def _load_(self, value, context):
+        if self._cs_kind_key_ is None:
+            if type(value) is self.__class__:
+                return value
+        else:
+            if isinstance(value, self.__class__) and getattr(value, self._cs_kind_key_) is not None:
+                return value
 
         with Marker(context, value) as marker:
+            if not isinstance(value, dict):
+                raise ValueError()
+
+            instance, fields = self._prepare_load(value, marker.context)
+
             for name, val in value.items():
+                key, property = None, None
                 with marker.cursor(name, Null):
-                    key = instance._es_names_.get(name)
-                    if key is not None and key == instance._cs_kind_key_:
-                        continue
-                    if not self.is_visible(key, marker.context, instance):
+                    if name not in fields:
                         if marker.context.strict:
                             raise ValueError()
                         continue
+                    key, property = fields[name]
+                    if key == instance._cs_kind_key_:
+                        continue
+                if key is None:
+                    continue
                 with marker.cursor(name, val):
-                    property = instance._cs_fields_[key]
-                    val = property.load(val, marker.context)
+                    if isinstance(property, Selector):
+                        val = property.select(self).load(val, marker.context)
+                    else:
+                        val = property.load(val, marker.context)
                     if val is None:
                         val = Null
                     instance[key] = val
@@ -831,12 +893,10 @@ class Entity(Composite):
     def __len__(self):
         return len(self._em_data_)
 
-    if PY2:
-        def __nonzero__(self):
-            return bool(self._em_data_)
-    else:
-        def __bool__(self):
-            return bool(self._em_data_)
+    def __bool__(self):
+        return bool(self._em_data_)
+
+    __nonzero__ = __bool__
 
     def copy(self):
         """
@@ -847,7 +907,7 @@ class Entity(Composite):
         return self._copy_()
 
     #
-    # rich comparison
+    # equality
     #
 
     def __eq__(self, other):
@@ -855,30 +915,6 @@ class Entity(Composite):
             return self._em_data_ == other._em_data_
         else:
             return self._em_data_ == other
-
-    def __gt__(self, other):
-        if isinstance(other, Entity):
-            return self._em_data_ > other._em_data_
-        else:
-            return self._em_data_ > other
-
-    def __lt__(self, other):
-        if isinstance(other, Entity):
-            return self._em_data_ < other._em_data_
-        else:
-            return self._em_data_ < other
-
-    def __ge__(self, other):
-        if isinstance(other, Entity):
-            return self._em_data_ >= other._em_data_
-        else:
-            return self._em_data_ >= other
-
-    def __le__(self, other):
-        if isinstance(other, Entity):
-            return self._em_data_ <= other._em_data_
-        else:
-            return self._em_data_ <= other
 
 
 class Union(Composite):
@@ -931,14 +967,15 @@ class Union(Composite):
         return self._um_val_ if name == self._um_key_ else None
 
     def _set_(self, name, value):
-        if value is None:
-            self._um_key_ = self._um_val_ = None
-        else:
+        if value is not None:
             self._um_key_ = name
             self._um_val_ = value
+        elif name == self._um_key_:
+            self._um_key_ = self._um_val_ = None
 
     def _delete_(self, name):
-        self._um_key_ = self._um_val_ = None
+        if name == self._um_key_:
+            self._um_key_ = self._um_val_ = None
 
     #
     # current status
@@ -982,9 +1019,10 @@ class Union(Composite):
         """
 
         if isinstance(self._um_val_, Composite):
-            self._um_val_.validate()
+            self._um_val_.validate(context)
         elif self._um_val_ is None:
             raise ValueError()
+        super(Union, self).validate(context)
 
     #
     # serialization
@@ -1022,5 +1060,6 @@ class Union(Composite):
 __all__ = [
     'Kind',
     'Entity',
+    'Selector',
     'Union',
 ]

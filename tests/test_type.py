@@ -45,6 +45,7 @@ def test_meta_options():
 
     assert isinstance(X.options, X.MetaOptions)
     assert X.options.x == 789
+    assert X().get_class_options().x == 789
     assert X.options.__dict__ == {}
 
     class Y(X):
@@ -55,3 +56,9 @@ def test_meta_options():
     assert isinstance(Y.options, X.MetaOptions)
     assert Y.options.x == 123
     assert Y.options.__dict__ == {'x': 123}
+    assert repr(Y) == 'class Y().Meta(x=123)'
+
+def test_options():
+
+    Type.Options(opt=True)
+
