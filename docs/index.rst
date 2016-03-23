@@ -16,7 +16,7 @@ Install
 
 ::
 
-    pip install flowdas-meta==1.0.0a1
+    pip install flowdas-meta
 
 파이썬 2.7 과 3.3+ 를 지원합니다. PyPy 역시 지원됩니다. 같이 설치되는 패키지는 없습니다.
 

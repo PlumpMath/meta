@@ -33,7 +33,7 @@ Install
 
 ::
 
-    pip install flowdas-meta==1.0.0a1
+    pip install flowdas-meta
 
 Meta requires Python 2.7, 3.3, 3.4, or 3.5. It also supports PyPy. There is no external dependencies.
 
