@@ -41,12 +41,12 @@ Feature Highlights
 ==================
 
 - `Polymorphic Type Hierarchy <http://flowdas.github.io/meta/inheritance.html>`_
-- `Union <http://flowdas.github.io/meta/union.html>`_ -
+- `Union <http://flowdas.github.io/meta/union.html>`_
 - `Generalized Tuple <http://flowdas.github.io/meta/tuple.html>`_
-- `Simplified Nesting <<http://flowdas.github.io/meta/nesting.html>>`_
+- `Simplified Nesting <http://flowdas.github.io/meta/nesting.html>`_
 
 Documentation
 =============
 
-Documentation is available at http://flowdas.github.io/meta/ .
+Documentation is available at http://flowdas.github.io/meta/.
 
