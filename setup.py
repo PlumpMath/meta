@@ -39,7 +39,7 @@ setup(
     zip_safe=True,
     keywords=('schema', 'model', 'entity', 'serealization', 'validation'),
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
         'Topic :: Software Development :: Libraries :: Python Modules',
         'License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)',
